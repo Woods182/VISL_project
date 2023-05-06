@@ -18,12 +18,12 @@ logic [3:0]     rounder_number_i;
 
 genvar i,j;
 generate
-    for (i = 0; i < 16; i++) begin : assign_input
+    for (i = 0; i < 16; i++) begin : assign_input_cut
         assign data_input_matrix_cut[i] = data_input_matrix[i * 16 +: 16];
     end
 endgenerate
 generate
-    for (j = 0; j < 2; j++) begin : assign_weight
+    for (j = 0; j < 2; j++) begin : assign_weight_cut
         assign data_weight_matrix_cut[j] = data_weight_matrix[j * 16 +: 16];
     end
 endgenerate

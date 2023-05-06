@@ -1,5 +1,5 @@
 TOPMODULE=regfile_tb
-FILELIST=./filelist/filelist.f
+FILELIST=./filelist.f
 INCLUDE_DIR=/home/ningbin/VISL_project/
 Mdir=./csrc
 makeDirs= mkdir -p out log csrc

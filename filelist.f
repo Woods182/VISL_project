@@ -1,4 +1,3 @@
-
 /home/ningbin/VISL_project/design/reg_file.sv
 /home/ningbin/VISL_project/design/adder.sv
 /home/ningbin/VISL_project/design/mul.sv
