@@ -8,8 +8,7 @@ parameter para_int_bits = 7, para_frac_bits = 9
     input [3:0]                                     add_number,//选择mac调用的reg
     input [3:0]                                     round_number,//round调用的reg
     input                                           rounder_en,
-    input [2:0]                                     connection_state,
-    output [para_int_bits + para_frac_bits - 1:0]   data_out,
+    output [para_int_bits + para_frac_bits - 1:0]   data_out
 );
 
 ///////////////////////////////////////////////////////////
@@ -86,7 +85,8 @@ rounder #(
 )(
     .in(rounder_data_in),
     .out(rounder_data_out)
-)
+);
+
 assign rounder_data_in= (rounder_en)? adddata_out_reg[round_number]:'d0;
 always_ff @(posedge clk)begin
     if (!rst_n) begin
