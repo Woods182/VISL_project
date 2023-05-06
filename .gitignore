@@ -2,3 +2,4 @@
 /csrc
 /out
 /log
+*.key
