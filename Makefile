@@ -1,4 +1,4 @@
-TOPMODULE=test_tb
+TOPMODULE=regfile_tb
 FILELIST=./filelist/filelist.f
 INCLUDE_DIR=/home/ningbin/VISL_project/
 Mdir=./csrc

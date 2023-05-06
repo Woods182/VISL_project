@@ -39,12 +39,11 @@ end
 ///////////////////////////////////////////////////////////
 // adder
 ///////////////////////////////////////////////////////////
-logic
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_in_1,adddata_in_2; 
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out_reg[7:0]; 
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out; 
-assign adddata_in_1=muldata_out_reg;
-assign adddata_in_2= adddata_out[add_number];
+assign adddata_in_1= muldata_out_reg;
+assign adddata_in_2= adddata_out_reg[add_number];
 
 adder #(
     .para_int_bits(para_int_bits),
@@ -54,19 +53,31 @@ adder #(
     .b(adddata_in_2),
     .sum(adddata_out)
 );
-always_ff @(posedge clk)begin
-    if(!rst_n) adddata_out_reg[7:0]<='d0;
-    else adddata_out_reg[add_number]<=adddata_out;
-end
-
-
+genvar i;
+generate
+    for (i = 0; i < 8; i++) begin : adddata_out_reg_reset
+        always @(posedge clk) begin
+            if (!rst_n) begin
+                adddata_out_reg[i] <= 'd0;
+            end
+            else begin
+             if(add_number==i)begin
+                adddata_out_reg[i] <= adddata_out;
+             end
+             else begin
+                adddata_out_reg[i] <= adddata_out_reg[i];
+             end
+            end
+        end
+    end
+endgenerate
 
 ///////////////////////////////////////////////////////////
 // formatter
 ///////////////////////////////////////////////////////////
 logic                                               rounder_en;
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0]  rounder_data_in;
-logic [para_int_bits + para_frac_bits - 1:0]        rounder_data_out,rounder_data_out_reg;
+logic [para_int_bits + para_frac_bits - 1:0]        rounder_data_out;
 logic [para_int_bits + para_frac_bits - 1:0]        rounder_data_out_reg;
 
 rounder #(
@@ -76,7 +87,7 @@ rounder #(
     .in(rounder_data_in),
     .out(rounder_data_out)
 )
-assign rounder_data_in= (rounder_en)? adddata_out_reg:'d0;
+assign rounder_data_in= (rounder_en)? adddata_out_reg[round_number]:'d0;
 always_ff @(posedge clk)begin
     if (!rst_n) begin
         rounder_data_out_reg<='d0;
