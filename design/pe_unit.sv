@@ -3,22 +3,21 @@ parameter para_int_bits = 7, para_frac_bits = 9
 ) (
     input clk,
     input rst_n,
-    input [para_int_bits + para_frac_bits - 1:0] data_in_1,
-    input [para_int_bits + para_frac_bits - 1:0] data_in_2,
-    input [3:0] add_number,
-    input rounder_en,
-    input [2:0] connection_state,
-    output [para_int_bits + para_frac_bits - 1:0] data_out,
+    input [para_int_bits + para_frac_bits - 1:0]    data_in_1,
+    input [para_int_bits + para_frac_bits - 1:0]    data_in_2,
+    input [3:0]                                     add_number,//选择mac调用的reg
+    input [3:0]                                     round_number,//round调用的reg
+    input                                           rounder_en,
+    input [2:0]                                     connection_state,
+    output [para_int_bits + para_frac_bits - 1:0]   data_out,
 );
-logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adder_out[8:0];
-
 
 ///////////////////////////////////////////////////////////
 // multiplier
 ///////////////////////////////////////////////////////////
-logic [para_int_bits + para_frac_bits - 1:0] muldata_in_1;
-logic [para_int_bits + para_frac_bits - 1:0] muldata_in_2;
-logic [(para_int_bits + para_frac_bits) * 2 - 1:0] muldata_out,muldata_out_reg;
+logic [para_int_bits + para_frac_bits - 1:0]        muldata_in_1;
+logic [para_int_bits + para_frac_bits - 1:0]        muldata_in_2;
+logic [(para_int_bits + para_frac_bits) * 2 - 1:0]  muldata_out,muldata_out_reg;
 
 assign muldata_in_1=data_in_1;
 assign muldata_in_2=data_in_2;
@@ -58,15 +57,18 @@ adder #(
 always_ff @(posedge clk)begin
     if(!rst_n) adddata_out_reg[7:0]<='d0;
     else adddata_out_reg[add_number]<=adddata_out;
-    
 end
+
 
 
 ///////////////////////////////////////////////////////////
 // formatter
 ///////////////////////////////////////////////////////////
-logic [(para_int_bits + para_frac_bits) * 2 - 1:0] rounder_data_in;
-logic [para_int_bits + para_frac_bits - 1:0] rounder_data_out;
+logic                                               rounder_en;
+logic [(para_int_bits + para_frac_bits) * 2 - 1:0]  rounder_data_in;
+logic [para_int_bits + para_frac_bits - 1:0]        rounder_data_out,rounder_data_out_reg;
+logic [para_int_bits + para_frac_bits - 1:0]        rounder_data_out_reg;
+
 rounder #(
     .para_int_bits(para_int_bits),
     .para_frac_bits(para_frac_bits) 
@@ -74,5 +76,17 @@ rounder #(
     .in(rounder_data_in),
     .out(rounder_data_out)
 )
-
+assign rounder_data_in= (rounder_en)? adddata_out_reg:'d0;
+always_ff @(posedge clk)begin
+    if (!rst_n) begin
+        rounder_data_out_reg<='d0;
+    end
+    else begin
+        rounder_data_out_reg<=rounder_data_out;
+    end
+end
+///////////////////////////////////////////////////////////
+// 输出
+///////////////////////////////////////////////////////////
+assign data_out=rounder_data_out_reg;
 endmodule
