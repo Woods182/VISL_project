@@ -1,3 +1,6 @@
+///////////////////////////////////////////////////////////
+// Author: woodsning
+///////////////////////////////////////////////////////////
 module pe_unit#(
 parameter para_int_bits = 7, para_frac_bits = 9
 ) (
@@ -7,7 +10,10 @@ parameter para_int_bits = 7, para_frac_bits = 9
     input [para_int_bits + para_frac_bits - 1:0]    data_in_2,
     input [3:0]                                     add_number,//选择mac调用的reg
     input                                           rounder_en,
-    output [para_int_bits + para_frac_bits - 1:0]   data_out
+    input                                           keep,
+    output [para_int_bits + para_frac_bits - 1:0]   data_out,
+    output                                          rounder_valid,
+    output [3:0]                                    round_number
     //output rounder_number
 );
 
@@ -32,6 +38,8 @@ multiplier #(
 
 always_ff @(posedge clk) begin
     if(!rst_n) muldata_out_reg<=0;
+    else if(keep) muldata_out_reg<=muldata_out_reg;
+
     else muldata_out_reg<=muldata_out;
 end
 
@@ -41,6 +49,7 @@ end
 logic [3:0]                                         add_number_r;
 always_ff @(posedge clk)begin
     if(!rst_n) add_number_r<=0;
+    else if(keep) add_number_r<=add_number_r;
     else add_number_r<=add_number;
 end
 
@@ -66,13 +75,14 @@ generate
             if (!rst_n) begin
                 adddata_out_reg[i] <= 'd0;
             end
-            else begin
-             if(add_number_r==i)begin
-                adddata_out_reg[i] <= adddata_out;
-             end
-             else begin
-                adddata_out_reg[i] <= adddata_out_reg[i];
-             end
+            else if(keep) dddata_out_reg[i] <= adddata_out_reg[i];
+                    else begin
+                    if(add_number_r==i)begin
+                        adddata_out_reg[i] <= adddata_out;
+                    end
+                    else begin
+                        adddata_out_reg[i] <= adddata_out_reg[i];
+                    end
             end
         end
     end
@@ -81,15 +91,15 @@ endgenerate
 ///////////////////////////////////////////////////////////
 // formatter
 ///////////////////////////////////////////////////////////
-logic [3:0] round_number;
+logic [3:0] round_number_r;
 logic       rounder_en_r,rounder_en_rr;
 
 always_ff @(posedge clk)begin
     if(!rst_n ) begin
-        round_number<=0;
+        round_number_r<=0;
     end
     else begin
-        round_number<=add_number_r;
+        round_number_r<=add_number_r;
     end
 end
 
@@ -116,7 +126,7 @@ rounder #(
     .out(rounder_data_out)
 );
 
-assign rounder_data_in= (rounder_en_rr)? adddata_out_reg[round_number]:'d0;
+assign rounder_data_in= (rounder_en_rr)? adddata_out_reg[round_number_r]:'d0;
 always_ff @(posedge clk)begin
     if (!rst_n) begin
         rounder_data_out_reg<='d0;
@@ -129,4 +139,6 @@ end
 // 输出
 ///////////////////////////////////////////////////////////
 assign data_out=rounder_data_out_reg;
+assign round_number=round_number_r;
+assign rounder_valid=rounder_en_rr;
 endmodule

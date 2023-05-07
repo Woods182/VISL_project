@@ -6,7 +6,11 @@ parameter  col= 16, row = 2
     input [255:0]               data_input_matrix,//一行16个数，16bit*16
     input [31:0]                data_weight_matrix,//一列中的两个数，16bit*2
     input [3:0]                 add_number,
-    output [1:0][15:0][15:0]    pe_array_out
+    input                       rounder_en,
+    input                       keep,
+    output [1:0][15:0][15:0]    pe_array_out,
+    output                      rounder_valid,
+    output                      round_number,
 );
 parameter para_int_bits = 7;
 parameter para_frac_bits = 9;
@@ -36,10 +40,13 @@ generate
                 .clk            (   clk                     ),
                 .rst_n          (   rst_n                   ),
                 .data_in_1      (   data_input_matrix_cut[n]),
-                .data_in_2      (   ata_weight_matrix_cut[m]),
+                .data_in_2      (   data_weight_matrix_cut[m]),
                 .add_number     (   add_number              ),//选择mac调用的reg
                 .rounder_en     (   rounder_en              ),
-                .data_out       (   data_out                )
+                .keep           (   keep                    ),
+                .data_out       (   data_out                ),
+                .rounder_valid  (   rounder_valid           ),
+                .round_number   (   rounder_number          )
             );
         end
     end
