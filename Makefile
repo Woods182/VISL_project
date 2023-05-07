@@ -1,4 +1,4 @@
-TOPMODULE=regfile_tb
+TOPMODULE=counter_tb
 FILELIST=./filelist.f
 INCLUDE_DIR=/home/ningbin/VISL_project/
 Mdir=./csrc
@@ -26,4 +26,4 @@ run:
 
 .PHONY: clean
 clean:
-		\rm -rf simv* *.log *.vpd *.dump csrc *.sim *.mra *.log ucli.key session* *.db vcs.key out/simv* out/*.vcd tmp DVEfiles  temp $(Mdir)
+		\rm -rf simv* *.log *.vpd *.dump csrc *.sim *.mra *.log ucli.key session* *.db vcs.key out/simv* tmp DVEfiles  temp $(Mdir)
