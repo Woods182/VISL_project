@@ -10,7 +10,7 @@ parameter  col= 16, row = 2
     input                       keep,
     output [1:0][15:0][15:0]    pe_array_out,
     output                      rounder_valid,
-    output                      round_number,
+    output                      round_number
 );
 parameter para_int_bits = 7;
 parameter para_frac_bits = 9;

@@ -56,6 +56,9 @@ end
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_in_1,adddata_in_2; 
 logic [7:0] [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out_reg; 
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out; 
+logic [3:0] round_number_r;
+logic       rounder_en_r,rounder_en_rr;
+
 assign adddata_in_1= muldata_out_reg;
 assign adddata_in_2= adddata_out_reg[add_number_r];
 
@@ -75,10 +78,13 @@ generate
             if (!rst_n) begin
                 adddata_out_reg[i] <= 'd0;
             end
-            else if(keep) dddata_out_reg[i] <= adddata_out_reg[i];
+            else if(keep) adddata_out_reg[i] <= adddata_out_reg[i];
                     else begin
                     if(add_number_r==i)begin
                         adddata_out_reg[i] <= adddata_out;
+                    end
+                    if(rounder_en_rr) begin
+                        adddata_out_reg[round_number_r]<=0;
                     end
                     else begin
                         adddata_out_reg[i] <= adddata_out_reg[i];
@@ -91,8 +97,7 @@ endgenerate
 ///////////////////////////////////////////////////////////
 // formatter
 ///////////////////////////////////////////////////////////
-logic [3:0] round_number_r;
-logic       rounder_en_r,rounder_en_rr;
+
 
 always_ff @(posedge clk)begin
     if(!rst_n ) begin

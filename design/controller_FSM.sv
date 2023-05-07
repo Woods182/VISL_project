@@ -26,12 +26,13 @@ module controller_FSM #(
 );
 localparam [3:0] // for 8 states
     IDLE = 0,
-    FIRST_LAYER_LDDAT = 1, //repeat 8+1 cycle*16
-    FIRST_LAYER_NORMAL= 2,  //repeat 8 cycle*16
-    FIRST_LAYER_ROUND = 3, //start format module
-    OTHER_LAYER_GETDAT = 4, //get the formatted data
-    OTHER_LAYER_NORMAL = 5, //repeat 16 cycle
-    OTHER_LAYER_ROUND = 6, //start format module
+    FIRST_LAYER_LDDAT1  = 7//load 2 weight
+    FIRST_LAYER_LDDAT2 = 1, //load one row weight cycle*16
+    FIRST_LAYER_NORMAL= 2,  
+    FIRST_LAYER_ROUND = 3, 
+    OTHER_LAYER_GETDAT = 4, 
+    OTHER_LAYER_NORMAL = 5, 
+    OTHER_LAYER_ROUND = 6, 
     OUTPUT = 7;
 
 reg[3:0] state_cur, state_next;
@@ -48,7 +49,12 @@ always_comb begin :N_state
         IDLE : begin
             state_next = (loaddata_rdy_i) ?  FIRST_LAYER_LDDAT : IDLE;
         end
-        FIRST_LAYER_LDDAT  : begin
+        FIRST_LAYER_LDDAT1  : begin
+            state_next = (!data_rdy_i)      ?     FIRST_LAYER_LDDAT   :
+                         (HCNT_data_i==16)  ?     FIRST_LAYER_ROUND   :
+                         FIRST_LAYER_NORMAL; 
+        end
+        FIRST_LAYER_LDDAT2  : begin
             state_next = (!data_rdy_i)      ?     FIRST_LAYER_LDDAT   :
                          (HCNT_data_i==16)  ?     FIRST_LAYER_ROUND   :
                          FIRST_LAYER_NORMAL;                          
