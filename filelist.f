@@ -1,3 +1,4 @@
+//design
 /home/ningbin/VISL_project/design/adder.sv
 /home/ningbin/VISL_project/design/mul.sv
 /home/ningbin/VISL_project/design/rounder.sv
@@ -8,7 +9,7 @@
 /home/ningbin/VISL_project/design/counter.sv
 /home/ningbin/VISL_project/design/shift_buffer.sv
 /home/ningbin/VISL_project/design/dataload.sv
-
+// testbench
 /home/ningbin/VISL_project/testbench/pe_unit_tb.sv
 /home/ningbin/VISL_project/testbench/counter_tb.sv
 /home/ningbin/VISL_project/testbench/shiftbuffer_tb.sv
