@@ -1,4 +1,15 @@
 # MLP
+*Author：WoodsNing,ZhaojunNi*     
+*Data：20230508*
+## pe_unit——module:
+- 两个数据输入连入乘法
+- rounder_en 该输入数据计算完后需不需要rounder
+- keep：保持数据regadd和reg_out，在input数据打八拍时候使用；
+- data_out:输出数据，有rounder才输出，其余情况输出入为0；
+- rounder_num：输出rounder第几组数1-8；
+- rounder_valid：输出数据是否有效
+
+
 ## FSM——module:
 1. 初始等待状态
     - 初始化输出reg和adder的reg数组

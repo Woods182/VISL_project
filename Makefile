@@ -1,4 +1,4 @@
-TOPMODULE=dataload_tb
+TOPMODULE=pe_unit_tb
 FILELIST=./filelist.f
 INCLUDE_DIR=/home/ningbin/VISL_project/
 Mdir=./csrc

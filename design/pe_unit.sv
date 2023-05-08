@@ -39,7 +39,6 @@ multiplier #(
 always_ff @(posedge clk) begin
     if(!rst_n) muldata_out_reg<=0;
     else if(keep) muldata_out_reg<=muldata_out_reg;
-
     else muldata_out_reg<=muldata_out;
 end
 
@@ -71,34 +70,26 @@ adder #(
     .b(adddata_in_2),
     .sum(adddata_out)
 );
-genvar i;
-generate
-    for (i = 0; i < 8; i++) begin : adddata_out_reg_reset
-        always @(posedge clk) begin
-            if (!rst_n) begin
-                adddata_out_reg[i] <= 'd0;
-            end
-            else if(keep) adddata_out_reg[i] <= adddata_out_reg[i];
-                    else begin
-                    if(add_number_r==i)begin
-                        adddata_out_reg[i] <= adddata_out;
-                    end
-                    if(rounder_en_rr) begin
-                        adddata_out_reg[round_number_r]<=0;
-                    end
-                    else begin
-                        adddata_out_reg[i] <= adddata_out_reg[i];
-                    end
-            end
-        end
-    end
-endgenerate
 
+always_ff @(posedge clk) begin
+    if(!rst_n)begin
+        adddata_out_reg <= 'd0;
+    end
+    else begin
+        case ({keep,rounder_en_rr})
+            2'b10: adddata_out_reg <= adddata_out_reg;
+            2'b00:begin
+                adddata_out_reg[add_number_r] <= adddata_out;
+            end
+            2'b11: adddata_out_reg[round_number_r] <= 'd0;
+            2'b01: adddata_out_reg[round_number_r] <= 'd0;
+            default: adddata_out_reg <= adddata_out_reg;
+        endcase
+    end
+end
 ///////////////////////////////////////////////////////////
 // formatter
 ///////////////////////////////////////////////////////////
-
-
 always_ff @(posedge clk)begin
     if(!rst_n ) begin
         round_number_r<=0;

@@ -2,9 +2,9 @@ module sramTp (
     input       clk,
     input       rst_n,
     input       en_r,
-    input       en_w,
+input       en_w,
     input [3:0] addr_r,
-    input [3:0] addr_w,
+ input [3:0] addr_w,
     input [7:0] din,
     output[7:0] dout
 );
