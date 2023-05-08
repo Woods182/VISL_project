@@ -2,8 +2,10 @@ module rounder #(parameter para_int_bits = 7, para_frac_bits = 9) (
     input signed [(para_int_bits + para_frac_bits) * 2 - 1:0] in,
     output signed [para_int_bits + para_frac_bits - 1:0] out
 );
+/*
 parameter WIDTH_OUTPUT=para_int_bits + para_frac_bits;
 parameter WIDTH_INPUT=(para_int_bits + para_frac_bits)*2;
+
 
 ///////////////////////////////////////////////////////////
 // necessary vars
@@ -60,5 +62,6 @@ always_comb begin
 end
 
 assign out = data_o_reg;
-
+*/
+assign out = in[para_int_bits + para_frac_bits - 1:0];
 endmodule

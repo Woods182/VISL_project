@@ -12,8 +12,8 @@ parameter para_int_bits = 7, para_frac_bits = 9
     input                                           rounder_en,
     input                                           keep,
     output [para_int_bits + para_frac_bits - 1:0]   data_out,
-    output                                          rounder_valid,
-    output [3:0]                                    round_number
+    output                                          rounder_valid
+    //output [3:0]                                    round_number
     //output rounder_number
 );
 
@@ -56,7 +56,7 @@ logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_in_1,adddata_in_2;
 logic [7:0] [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out_reg; 
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out; 
 logic [3:0] round_number_r;
-logic       rounder_en_r,rounder_en_rr;
+logic       rounder_en_r,rounder_en_rr,rounder_en_rrr;
 
 assign adddata_in_1= muldata_out_reg;
 assign adddata_in_2= adddata_out_reg[add_number_r];
@@ -81,8 +81,10 @@ always_ff @(posedge clk) begin
             2'b00:begin
                 adddata_out_reg[add_number_r] <= adddata_out;
             end
+            /*
             2'b11: adddata_out_reg[round_number_r] <= 'd0;
             2'b01: adddata_out_reg[round_number_r] <= 'd0;
+            */
             default: adddata_out_reg <= adddata_out_reg;
         endcase
     end
@@ -103,10 +105,12 @@ always_ff @(posedge clk)begin
     if(!rst_n ) begin
         rounder_en_r<=0;
         rounder_en_rr<=0;
+        rounder_en_rrr<=0;
     end
     else begin
         rounder_en_r<=rounder_en;
         rounder_en_rr<=rounder_en_r;
+        rounder_en_rrr<=rounder_en_rr;
     end
 end
 
@@ -125,6 +129,7 @@ rounder #(
 assign rounder_data_in= (rounder_en_rr)? adddata_out_reg[round_number_r]:'d0;
 always_ff @(posedge clk)begin
     if (!rst_n) begin
+        
         rounder_data_out_reg<='d0;
     end
     else begin
@@ -135,6 +140,6 @@ end
 // 输出
 ///////////////////////////////////////////////////////////
 assign data_out=rounder_data_out_reg;
-assign round_number=round_number_r;
-assign rounder_valid=rounder_en_rr;
+//assign round_number=round_number_r;
+assign rounder_valid=(rounder_en_rrr);
 endmodule

@@ -14,7 +14,6 @@ parameter para_frac_bits = 9;
 logic                           clk;
 logic                           rst_n,keep,rounder_valid;
 logic   [3:0]                   add_number_i;
-logic   [3:0]                   round_number_out;
 logic                           rounder_en;
 logic  [para_int_bits + para_frac_bits - 1:0]        data_in_1,data_in_2;
 logic  [para_int_bits + para_frac_bits - 1:0]        data_out; 
@@ -29,8 +28,8 @@ pe_unit_inst (
     .rounder_en  (  rounder_en      ),
     .keep        (  keep            ),
     .data_out    (  data_out        ),
-    .rounder_valid(  rounder_valid      ),
-    .round_number(  round_number_out)
+    .rounder_valid(  rounder_valid      )
+    //.round_number(  round_number_out)
 );
 
 initial begin

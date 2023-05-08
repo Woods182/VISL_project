@@ -34,18 +34,18 @@ dataload    dataload_inst(
 );
 //FSM
 
-    pe_array#(.col(col),.row(row)
-    )(
-        .clk                (   clk),
-        .rst_n              (pe_rst_n),
-        .data_input_matrix  (buffer[]),//一行16个数，16bit*16
-        .data_weight_matrix (buffer[]),//一列中的两个数，16bit*2
-        .add_number         (controller_FSM_o   ),
-        .rounder_en         (controller_FSM_o),
-        .keep               (controller_FSM             ),
-        .pe_array_out       (round_out_r),
-        .rounder_valid      (rounder_valid),
-        .round_number       (round_number),
+//pe_array
+    pe_array pe_array_inst(
+        .clk            (clk),
+        .rst_n          (rst_n),
+        .data_input_matrix(data_input_matrix_i),//一行16个数，16bit*16
+        .data_weight_matrix(data_weight_matrix_i),//一列中的两个数，16bit*2
+        .add_number     (add_number_i),
+        .rounder_en     (rounder_en),
+        .keep           (keep),
+        .pe_array_out   (pe_array_o),
+        .rounder_valid  (rounder_valid),
+        .round_number   (round_number_o)
     );
 
     always_ff @(    posedge clk )begin
@@ -57,7 +57,8 @@ dataload    dataload_inst(
         end
         else reg_out<=reg_out;     
     end
-//数据输出
+    
+//output
     always_ff @(    posedge clk )begin
         if(result_valid_o ) begin
 

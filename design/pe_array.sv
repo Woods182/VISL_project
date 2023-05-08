@@ -10,14 +10,12 @@ parameter  col= 16, row = 2
     input                       keep,
     output [1:0][15:0][15:0]    pe_array_out,
     output                      rounder_valid,
-    output                      round_number
+    output [3:0]               round_number
 );
 parameter para_int_bits = 7;
 parameter para_frac_bits = 9;
-logic [15:0]    data_input_matrix_cut [15:0];
-logic [15:0]    data_weight_matrix_cut [1:0];
-logic [3:0]     add_number_i;
-logic [3:0]     rounder_number_i;
+logic [15:0][15:0]    data_input_matrix_cut ;
+logic [1:0][15:0]    data_weight_matrix_cut ;
 
 genvar i,j;
 generate
@@ -46,10 +44,25 @@ generate
                 .rounder_en     (   rounder_en              ),
                 .keep           (   keep                    ),
                 .data_out       (   pe_array_out[m][n]      ),
-                .rounder_valid  (   rounder_valid           ),
-                .round_number   (   round_number            )
+                .rounder_valid  (   rounder_valid           )
+                //.round_number   (   round_number            )
             );
         end
     end
 endgenerate
+logic [3:0] round_number_rr,round_number_r,round_number_rrr;
+always_ff   @(posedge  clk)begin
+    if(!rst_n)begin
+        round_number_r<=0;
+        round_number_rr<=0;
+        round_number_rrr<=0;
+    end
+    else begin
+        round_number_r<=add_number;
+        round_number_rr<=round_number_r;
+        round_number_rrr<=round_number_rr;
+    end
+end
+
+assign round_number=(rounder_valid) ? round_number_rrr:0;
 endmodule
