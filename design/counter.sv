@@ -1,13 +1,14 @@
 ///////////////////////////////////////////////////////////
 // Author: woodsning
 ///////////////////////////////////////////////////////////
-module counter(
+module counter#(    cnt_WIDTH   =   4
+)(
     input                            cnt_clk        ,
     input                            cnt_rst_n      ,
     input                            cnt_en         ,
-    output [4:0] cnt_o
+    output        [cnt_WIDTH-1:0]              cnt_o
 );
-logic [4:0] counter;
+logic [cnt_WIDTH-2:0] counter;
 always_ff @(    posedge cnt_clk     )begin
     if(!cnt_rst_n) begin
         counter<=0;

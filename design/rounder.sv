@@ -63,5 +63,5 @@ end
 
 assign out = data_o_reg;
 */
-assign out = in[para_int_bits + para_frac_bits - 1:0];
+assign out = in[para_int_bits + para_frac_bits - 1:0];//简化rounder 用于module_tb
 endmodule
