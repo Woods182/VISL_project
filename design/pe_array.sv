@@ -31,6 +31,7 @@ generate
     end
 endgenerate
 
+
 genvar m, n;
 generate
     for (m = 0; m < row; m = m + 1) begin :array_genarate
@@ -44,13 +45,11 @@ generate
                 .add_number     (   add_number              ),//选择mac调用的reg
                 .rounder_en     (   rounder_en              ),
                 .keep           (   keep                    ),
-                .data_out       (   data_out                ),
+                .data_out       (   pe_array_out[m][n]      ),
                 .rounder_valid  (   rounder_valid           ),
-                .round_number   (   rounder_number          )
+                .round_number   (   round_number            )
             );
         end
     end
 endgenerate
-
-
 endmodule
