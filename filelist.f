@@ -10,7 +10,7 @@
 /home/ningbin/VISL_project/design/shift_buffer.sv
 /home/ningbin/VISL_project/design/dataload.sv
 //home/ningbin/VISL_project/design/MLP_acc_top.sv
-//home/ningbin/VISL_project/design/controller_FSM.sv
+/home/ningbin/VISL_project/design/controller_FSM.sv
 
 // testbench
 /home/ningbin/VISL_project/testbench/pe_unit_tb.sv
