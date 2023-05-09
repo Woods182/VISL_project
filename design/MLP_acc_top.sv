@@ -28,7 +28,7 @@ module MLP_acc_top (
     logic           load_type_i_r;
     logic  [3:0]    input_load_number_r;//输入input第几排 0-15
     logic  [2:0]    layer_number_r;//计算第几层0-7
-    logic   [2:0]   weight_number_r;
+    logic  [2:0]   weight_number_r;
 //因为dataload打一拍，所以让输入到array的loadtype打一拍
     always_ff @(posedge clk) begin
         if(!rst_n)begin
@@ -131,5 +131,5 @@ end
         end
     end
     assign result_payload_o =   result_payload_o_c ;
-    assign result_valid_o   =   result_valid_o_rr  
+    assign result_valid_o   =   result_valid_o_rr  ;
 endmodule

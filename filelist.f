@@ -19,4 +19,5 @@
 /home/ningbin/VISL_project/testbench/dataload_tb.sv
 /home/ningbin/VISL_project/testbench/pe_array_tb.sv
 /home/ningbin/VISL_project/testbench/top_tb.sv
+/home/ningbin/VISL_project/testbench/test_tb.sv
 //home/ningbin/VISL_project/testbench/controller_FSM_tb.sv
