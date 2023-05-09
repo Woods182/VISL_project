@@ -42,8 +42,11 @@ always_comb begin
         cnt = 0;
     end
 end
-
-assign data_valid_o = (cnt_reg == buffer_SIZE-1) && wr_en_i;
+logic data_valid_o_r;
+always_ff @(posedge clk)begin
+     data_valid_o_r <= (cnt_reg == buffer_SIZE-1) && wr_en_i;
+end
+assign data_valid_o=data_valid_o_r;
 assign data_o = data_o_r;
     
 endmodule

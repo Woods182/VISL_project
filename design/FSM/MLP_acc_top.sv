@@ -3,7 +3,7 @@ module MLP_acc_top (
     input           rst_n,
     input           load_en_i, //开始输入数据
     input  [31:0]   load_payload_i,//
-    input           load_type_i,//input-1,weight-0
+    input           load_type_i,
     input  [3:0]    input_load_number,//输入input第几排 0-15
     input  [2:0]    layer_number,//计算第几层0-7
     input   [2:0]   weight_number,//0-7   
@@ -25,33 +25,64 @@ module MLP_acc_top (
         .weight_valid               (   dataload_weight_valid   ),
         .input_valid                (   dataload_input_valid    )    
     );
-    logic           load_type_i_r;
-    logic  [3:0]    input_load_number_r;//输入input第几排 0-15
-    logic  [2:0]    layer_number_r;//计算第几层0-7
-    logic   [2:0]   weight_number_r;
-//因为dataload打一拍，所以让输入到array的loadtype打一拍
+
+    logic [255:0]  dataload_input_data_r;
+    logic [31:0]   dataload_weight_o_r;
+    logic [2:0]    weight_number_r;
+    logic [3:0]    input_load_number_r;
+    //因为状态机打一拍，所以让输入到array的所有数据都打一拍
     always_ff @(posedge clk) begin
         if(!rst_n)begin
-            load_type_i_r <= 'd0;
-            input_load_number_r<= 'd0;
-            layer_number_r<= 'd0;
-            weight_number_r<= 'd0;
+            input_load_number_r <= 'd0;
+            weight_number_r     <= 'd0;
         end
         else begin
-            load_type_i_r <= load_type_i;
-            input_load_number_r<= input_load_number;
-            layer_number_r<= layer_number_r;
-            weight_number_r<= weight_number;
+            input_load_number_r <= input_load_number;
+            weight_number_r     <= weight_number;
         end
     end
+    always_ff @(posedge clk) begin
+        if(!rst_n) begin
+            dataload_input_data_r <=  0;
+            dataload_weight_o_r   <=  0;
+        end
+        if(dataload_input_valid) begin 
+             dataload_input_data_r  <=  dataload_input_data;
+        end
+        if(dataload_weight_valid) begin
+            dataload_weight_o_r     <=  dataload_weight_o;
+        end
+    end
+//FSM
+    logic                   FSM_result_valid_o;
+    logic                   FSM_dataload_type_o;
+    logic                   FSM_dataload_en_i; 
+    logic                   array_rounder_vaild;
+    logic                   array_keep;
+    logic                   array_rounder_en;
+    logic                   array_input_type;                
 
-//array input选择，控制信号
+    controller_FSM controller_FSM_inst (
+        .clk                    (   clk     ),
+        .rst_n                  (   rst_n   ),
+        .input_load_number      (   input_load_number),//输入input第几排 0-15
+        .layer_number           (   layer_number),//计算第几层0-7
+        .weight_number          (   weight_number),//0-7  
+        .result_valid_o         (   FSM_result_valid_o),                  
+        .dataload_en_i          (   load_en_i),
+        .dataload_weight_valid  (   dataload_weight_valid),
+        .dataload_input_valid   (   dataload_input_valid),
+        //pe_array
+        .array_rounder_vaild    (   array_rounder_vaild),
+        .array_keep             (   array_keep),
+        .array_rounder_en       (   array_rounder_en),
+        .array_input_type       (   array_input_type)
+    );
+
+//array input选择
     logic   [15:0][15:0][15:0]      out_reg;
     logic   [255:0]                 data_input_matrix_i;
-    assign data_input_matrix_i = ( layer_number_r == 0) ? dataload_input_data : out_reg[input_load_number_r*2+1:input_load_number_r*2] ;//按位对应是否相同？
-    assign  array_rounder_en =  (input_load_number_r == 7);
-    assign  array_keep =    load_type_i;
-
+    assign data_input_matrix_i = ( array_input_type == 0) ? dataload_input_data_r : out_reg ;//按位对应是否相同？
 //pe_array
     parameter  col= 16, row = 2;
     logic                           array_keep,array_rounder_valid;
@@ -64,7 +95,7 @@ module MLP_acc_top (
         .clk                    (   clk                     ),
         .rst_n                  (   rst_n                   ),
         .data_input_matrix      (   data_input_matrix_i     ),//一行16个数，16bit*16
-        .data_weight_matrix     (   dataload_weight_o       ),//一列中的两个数，16bit*2
+        .data_weight_matrix     (   dataload_weight_o_r     ),//一列中的两个数，16bit*2
         .add_number             (   weight_number_r         ),
         .rounder_en             (   array_rounder_en        ),
         .keep                   (   array_keep              ),
@@ -79,57 +110,24 @@ module MLP_acc_top (
                 out_reg <= 'd0;
             end
             if(array_rounder_valid) begin
-                out_reg[round_number_o*2 +1: round_number_o*2] <= pe_array_o;
+                out_reg[round_number_o*2 -1: round_number_o*2 -3] <= pe_array_o;
             end
     end
 //output
-logic [2:0] layer_num_rr,layer_num_r,layer_num_rrr;
-always_ff   @(posedge  clk)begin
-    if(!rst_n)begin
-        layer_num_r<=0;
-        layer_num_rr<=0;
-        layer_num_rrr<=0;
-    end
-    else begin
-        layer_num_r<=layer_number_r;
-        layer_num_rr<=layer_num_r;
-        layer_num_rrr<=layer_num_rr;
-    end
-end
-
-    logic [31:0]   result_payload_o_c;
-    logic           result_valid_o_r,result_valid_o_rr;
-    always_ff @(posedge clk)begin
-        if(!rst_n)begin
-            result_valid_o_r <= 0;
-        end
-        else begin
-                if((layer_num_rrr == 7) &&(round_number_o==7 )&&(array_rounder_valid)) begin
-                    result_valid_o_r  <= 1;
-                end
-                else begin
-                    result_valid_o_r <= result_valid_o_r;
-                end
-        end
-    end
-
+    logic [31:0]   result_payload_o_c,FSM_result_valid_o_r;
 
     always_ff @(  posedge clk )begin
-        if(!rst_n)begin
-            result_valid_o_rr<=0;
-            result_payload_o_c<=0;
+        if(FSM_result_valid_o ) begin
+                result_payload_o_c <= out_reg [0][0];
+                FSM_result_valid_o_r <= FSM_result_valid_o;
+                out_reg <=  (out_reg >> 16);
         end
-        else begin
-            result_valid_o_rr<=result_valid_o_r;
-            if(result_valid_o_r ) begin
-                    result_payload_o_c <= out_reg [0][0];
-                    out_reg <=  (out_reg >> 16);
-            end
-            else begin
-                result_valid_o_r <=0;
-            end
+        else    begin
+             FSM_result_valid_o_r <=0;
         end
     end
     assign result_payload_o =   result_payload_o_c ;
-    assign result_valid_o   =   result_valid_o_rr  
+    assign result_valid_o   =   FSM_result_valid_o_r;
+
+
 endmodule

@@ -1,4 +1,4 @@
-TOPMODULE=pe_array_tb
+TOPMODULE=top_tb
 FILELIST=./filelist.f
 INCLUDE_DIR=/home/ningbin/VISL_project/
 Mdir=./csrc

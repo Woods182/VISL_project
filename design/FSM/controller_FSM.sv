@@ -2,7 +2,7 @@ module controller_FSM (
     input                           clk             ,
     input                           rst_n           ,
     input   [3:0]                   input_load_number,//输入input第几排 0-15
-    input                           layer_number,//计算第几层0-7
+    input   [2:0]                   layer_number,//计算第几层0-7
     input   [2:0]                   weight_number,//0-7  
     output                          result_valid_o,                  
     //dataload
@@ -36,11 +36,10 @@ end
 
 always_comb begin :N_state
     case (state_cur)
-        IDLE : state_next = (!rst_n || !load_en_i) ?  IDLE : FIRST_LAYER_LDDAT1 ;
+        IDLE : state_next = (!rst_n || !dataload_en_i) ?  IDLE : FIRST_LAYER_LDDAT1 ;
         FIRST_LAYER_LDDAT1  :   state_next =    (!rst_n)                ?       IDLE:
                                                 (dataload_weight_valid) ?       FIRST_LAYER_LDDAT2  :
                                                 FIRST_LAYER_LDDAT1  ;
-
 
         FIRST_LAYER_LDDAT2  :    state_next =   (!rst_n)                ?       IDLE:
                                                 (dataload_input_valid)  ?       FIRST_LAYER_NORMAL  :
@@ -72,68 +71,80 @@ end
 ///////////////////////////////////////////////////////////
 // output assign
 ///////////////////////////////////////////////////////////
+    logic   array_keep_r;
+    logic   array_rounder_en_r=0;
+    logic   array_input_type_r=0;
+    logic   result_valid_o_r=0;
+
+    assign  array_keep=array_keep_r;
+    assign   array_rounder_en=array_rounder_en_r;
+    assign   array_input_type=array_input_type_r;
+    assign   result_valid_o=result_valid_o_r;
+
+
+    
 always_comb begin : OUTPUT_BLOCK
     //dataload_en_i=0;
-    array_keep=0;
-    array_rounder_en=0;
-    array_input_type=0;
-    result_valid_o=0;
+    array_keep_r=0;
+    array_rounder_en_r=0;
+    array_input_type_r=0;
+    result_valid_o_r=0;
     case (state_cur)
         IDLE : begin
             //dataload_en_i=0;
-            array_keep=0;
-            array_rounder_en=0;
-            array_input_type=0;
-            result_valid_o=0;
+            array_keep_r=0;
+            array_rounder_en_r=0;
+            array_input_type_r=0;
+            result_valid_o_r=0;
         end
         FIRST_LAYER_LDDAT1 : begin
             //dataload_en_i=1;
-            array_keep=0;
-            array_rounder_en=0;
-            array_input_type=0;
-            result_valid_o=0;
+            array_keep_r=0;
+            array_rounder_en_r=0;
+            array_input_type_r=0;
+            result_valid_o_r=0;
         end
         FIRST_LAYER_LDDAT2 : begin
             //dataload_en_i=1;
-            array_keep=1;
-            array_rounder_en=0;
-            array_input_type=0;
-            result_valid_o=0;
+            array_keep_r=1;
+            array_rounder_en_r=0;
+            array_input_type_r=0;
+            result_valid_o_r=0;
         end
         FIRST_LAYER_NORMAL : begin
             //dataload_en_i=1;
-            array_keep=0;
-            array_rounder_en=0;
-            array_input_type=0;
-            result_valid_o=0;
+            array_keep_r=0;
+            array_rounder_en_r=0;
+            array_input_type_r=0;
+            result_valid_o_r=0;
         end
         FIRST_LAYER_ROUND : begin
             //dataload_en_i=1;
-            array_keep=0;
-            array_rounder_en=1;
-            array_input_type=0;
-            result_valid_o=0;
+            array_keep_r=0;
+            array_rounder_en_r=1;
+            array_input_type_r=0;
+            result_valid_o_r=0;
         end
         OTHER_LAYER_NORMAL : begin
             //dataload_en_i=1;
-            array_keep=0;
-            array_rounder_en=0;
-            array_input_type=1;
-            result_valid_o=0;
+            array_keep_r=0;
+            array_rounder_en_r=0;
+            array_input_type_r=1;
+            result_valid_o_r=0;
         end
         OTHER_LAYER_ROUND : begin
             //dataload_en_i=1;
-            array_keep=0;
-            array_rounder_en=1;
-            array_input_type=1;
-            result_valid_o=0;
+            array_keep_r=0;
+            array_rounder_en_r=1;
+            array_input_type_r=1;
+            result_valid_o_r=0;
         end
         OUTPUT : begin
             //dataload_en_i=0;
-            array_keep=0;
-            array_rounder_en=0;
-            array_input_type=0;
-            result_valid_o=1;
+            array_keep_r=0;
+            array_rounder_en_r=0;
+            array_input_type_r=0;
+            result_valid_o_r=1;
         end
     endcase
 end

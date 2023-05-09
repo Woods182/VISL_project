@@ -9,7 +9,7 @@ module counter_tb();
         .cnt_o(out)
     );
     initial begin
-        clk = 0;
+        
         forever #5 clk = ~clk;
     end
 
