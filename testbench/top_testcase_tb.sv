@@ -14,11 +14,11 @@ logic  [2:0]    layer_number;//计算第几层0-7
 logic  [2:0]    weight_number;//0-7   
 logic           result_valid_o;
 logic [31:0]    result_payload_o;
-logic [2:0]     layer_num_top;
+logic [3:0]     layer_num_top;
 logic [63:0]    clk_cnt ;
-reg   [7:0] [15:0] [ 15:0 ][15:0]  matrix_weight  ;
-reg   [15:0] [ 15:0 ][15:0]  matrix_inputs  ;
-reg   [15:0] [ 15:0 ][15:0]  matrix_reference  ;
+reg  signed [7:0] [15:0] [ 15:0 ][15:0]  matrix_weight  ;
+reg  signed [15:0] [ 15:0 ][15:0]  matrix_inputs  ;
+reg  signed [15:0] [ 15:0 ][15:0]  matrix_reference  ;
 integer         time_start ;
 integer         time_end ;
 
@@ -40,6 +40,14 @@ initial begin
     init_matrix_weight_with_file();
     init_matrix_inputs_with_file();
     printf("---------------------------------");
+    printf("matrix_inputs.", "green");
+    printf("---------------------------------");
+    printf_3d_array( matrix_inputs );
+    printf("---------------------------------");
+    printf("matrix_weight_0.", "green");
+    printf("---------------------------------");
+    printf_3d_array( matrix_weight[0] );
+    printf("---------------------------------");
     printf("Start the simulation.", "green");
     printf("---------------------------------");
     //idle
@@ -54,28 +62,24 @@ initial begin
     init_matrix_weight_with_file();
     init_matrix_inputs_with_file();
     init_matrix_reference_with_file();
+    
     delay(5);
-    rst_n               =   1;
+    rst_n      =   1;
     time_start = clk_cnt ;
     //开始输入数据 第一层
     printf("Start computing first layer.", "normal");
     compute_weight1();
     printf("Finish icomputing first layer.", "normal");
     printf("Start computing other layers.", "normal");
-/*     for (layer_num_top = 1;layer_num_top <=6 ;layer_num_top++ ) begin
+   for (layer_num_top = 1;layer_num_top <=7 ;layer_num_top++ ) begin
         compute_weight_other(layer_num_top);
     end 
-    compute_weight_other(7); */
+    //compute_weight_other(1); 
+    //compute_weight_other(2); 
     printf("Finish computing other layers.", "normal");
     printf("---------------------------------");
     printf("Simulation is finished.", "green");
     printf("---------------------------------");
-    
-/*     load_payload_i      =   3;
-    load_type_i         =   0;
-    input_load_number   =   0;    
-    layer_number        =   1;
-    weight_number       =   0; */ 
     delay(130);
     time_end = clk_cnt ;
     $display( "There are %d clock.", time_end-time_start );
@@ -134,19 +138,17 @@ task compute_weight1();
         input_load_number   = i_num;
         //input一行八拍
         for (i_cnt = 0  ;  i_cnt<=7 ; i_cnt++)begin
-            load_payload_i= {matrix_inputs[i_num][i_cnt*2+1], matrix_inputs[i_num][i_cnt*2] };
+            load_payload_i= {matrix_inputs[i_cnt*2+1][i_num], matrix_inputs[i_cnt*2][i_num] };
             delay(1);
         end
         for (w_num = 0  ;  w_num<=7 ; w_num++) begin
             weight_number   = w_num; 
-            load_type_i     =0;
-            load_payload_i  ={ matrix_weight[layer_number][w_num*2+1][i_num], matrix_weight[layer_number][w_num*2][i_num] };
+            load_type_i     = 0;
+            load_payload_i  ={ matrix_weight[layer_number][i_num][w_num*2+1], matrix_weight[layer_number][i_num][w_num*2] };
             delay(1);
         end
     end
 endtask
-
-
 
 task compute_weight_other(
     input [2:0] l_num   //第几个输入
@@ -182,7 +184,6 @@ end
 initial begin
     clk_cnt = 0 ;
 end
-
 always @(posedge clk) begin
     if(rst_n == 0) begin
         clk_cnt <= 0 ;
@@ -192,7 +193,7 @@ always @(posedge clk) begin
 end
 
 // *************************************************************************************
-// Useful tas
+// Useful task
 // *************************************************************************************
 //delay 多少周期数
 task delay(                                 
@@ -212,6 +213,43 @@ task sys_rst(
     delay(cycles);
     rst_n = 1 ;
 endtask 
+
+task printf_3d_array(  
+    input   [15:0] [ 15:0 ][15:0]  matrix
+  );
+  integer i, j;
+    begin
+      for (i = 0; i < 16; i = i + 1) begin
+        for (j = 0; j < 16; j = j + 1) begin
+            $write("%d ",$signed(matrix[i][j]));
+          end
+          $display(""); // print a newline at the end of each row
+        end
+    end
+endtask
+//打印结果
+
+/* logic   [15:0]  output_high,output_low;
+assign  output_low  =   result_payload_o[15:0];
+assign  output_high =   result_payload_o[31:16];  */
+
+/* always  begin
+    integer f,k;
+    if(result_valid_o == 1) begin
+        printf("---------------------------------");
+        printf("output", "green");
+        printf("---------------------------------");
+        for (f = 0;f<16 ;  f++  ) begin
+            for (k=0;k<=7;k++)  begin
+            $write("%d ",$signed(output_low));
+            $write("%d ",$signed(output_high));
+            delay(1);
+            end
+            $display("");
+        end
+        $display("");
+    end
+end */
 
 
 task printf( string text, string color="normal" );
@@ -270,4 +308,5 @@ endtask
 task unset_display_color();
     $write("\033[0m");
 endtask 
+
 endmodule

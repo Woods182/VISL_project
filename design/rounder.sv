@@ -61,7 +61,7 @@ always_comb begin
     end
 end
 
-assign out = data_o_reg;
+assign out = data_o_reg; 
 
 //assign out = in[para_int_bits + para_frac_bits - 1:0];//简化rounder 用于module_tb
 //assign out = in[19:4];
