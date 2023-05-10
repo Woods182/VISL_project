@@ -244,11 +244,14 @@ task compere_max(
     input   [15:0] [ 15:0 ][15:0]  matrix
   );
   integer i, j;
+  integer error_cnt ;
+  error_cnt = 0 ;
     begin
       for (i = 0; i < 16; i = i + 1) begin
         for (j = 0; j < 16; j = j + 1) begin
             if(matrix[i][j] != matrix_reference[i][j]) begin
                 $write("\033[0m\033[1;31m%d\033[0m ",$signed(matrix[i][j]));//红色
+                error_cnt = error_cnt + 1 ;
             end
             else begin
                 $write("\033[0m\033[1;32m%d\033[0m ",$signed(matrix[i][j]));
@@ -256,6 +259,18 @@ task compere_max(
           end
           $display(""); // print a newline at the end of each row
         end
+        $display( "There are %d errors.", error_cnt );
+        if (error_cnt==0)begin
+            printf("---------------------------------");
+            printf("Successfully    !   ", "blue");
+            printf("---------------------------------");
+        end
+        else begin
+            printf("---------------------------------");
+            printf("Failed    !   ", "blue");
+            printf("---------------------------------");
+        end
+
     end
 endtask
 //打印结果
