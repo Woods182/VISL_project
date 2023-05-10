@@ -33,7 +33,7 @@ MLP_acc_top MLP_acc_top_inst(
     .result_valid_o         (   result_valid_o  ),
     .result_payload_o       (   result_payload_o)
 );
-
+logic [2:0]     layer_num_top;
 initial begin
     printf("---------------------------------");
     printf("Start the simulation.", "green");
@@ -51,20 +51,30 @@ initial begin
     delay(5);
     rst_n               =   1;
     //开始输入数据 第一层
+    printf("Start computing first layer.", "normal");
     compute_weight1();
+    printf("Finish icomputing first layer.", "normal");
+    printf("Start computing other layers.", "normal");
+/* 
+    for (layer_num_top = 1;layer_num_top <=6 ;layer_num_top++ ) begin
+        compute_weight_other(layer_num_top);
+    end 
+     */
+    compute_weight_other(1);
+    printf("Finish computing other layers.", "normal");
     printf("---------------------------------");
     printf("Simulation is finished.", "green");
     printf("---------------------------------");
-    $write("Totally %8d clock cycles passed.\n",clk_cnt);
-    load_payload_i      =   0;
+    
+/*     load_payload_i      =   3;
     load_type_i         =   0;
     input_load_number   =   0;    
     layer_number        =   1;
-    weight_number       =   0;
-    delay(10);
+    weight_number       =   0; */ 
+    delay(4);
+    $write("Totally %8d clock cycles passed.\n",clk_cnt);
+    rst_n =0;
     $finish ;
-
-
 end
 // *************************************************************************************
 // custom task
@@ -84,7 +94,8 @@ task init_matrix_inputs();
     integer idx_mat_r, idx_mat_c ;
     for( idx_mat_r=0; idx_mat_r<16; idx_mat_r=idx_mat_r+1 ) begin
         for( idx_mat_c=0; idx_mat_c<16; idx_mat_c=idx_mat_c+1 ) begin
-            matrix_inputs[idx_mat_r][idx_mat_c] = idx_mat_r + idx_mat_c ;
+            matrix_inputs[idx_mat_r][idx_mat_c] = 1;
+            //idx_mat_r + idx_mat_c ;
         end
     end
 endtask
@@ -105,6 +116,31 @@ task compute_weight1();
         for (w_num = 0  ;  w_num<=7 ; w_num++) begin
             weight_number   = w_num; 
             load_type_i     =0;
+            load_payload_i  ={ matrix_weight[layer_number][w_num*2+1][i_num], matrix_weight[layer_number][w_num*2][i_num] };
+            delay(1);
+        end
+    end
+endtask
+/* 
+    load_payload_i      =   3;
+    load_type_i         =   0;
+    input_load_number   =   0;    
+    layer_number        =   1;
+    weight_number       =   0;  */
+
+
+
+
+task compute_weight_other(
+    input [2:0] l_num   //第几个输入
+);
+    logic   [5:0] w_num,i_num,i_cnt;
+    layer_number =  l_num;
+    for(i_num =0 ; i_num <=15 ; i_num++)begin
+        input_load_number   = i_num;
+        for (w_num = 0  ;  w_num<=7 ; w_num++) begin
+            weight_number   = w_num; 
+            load_type_i     =   0;
             load_payload_i  ={ matrix_weight[layer_number][w_num*2+1][i_num], matrix_weight[layer_number][w_num*2][i_num] };
             delay(1);
         end

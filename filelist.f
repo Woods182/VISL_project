@@ -8,6 +8,7 @@
 
 /home/ningbin/VISL_project/design/counter.sv
 /home/ningbin/VISL_project/design/shift_buffer.sv
+/home/ningbin/VISL_project/design/shift_buffer2.sv
 /home/ningbin/VISL_project/design/dataload.sv
 /home/ningbin/VISL_project/design/MLP_acc_top.sv
 //home/ningbin/VISL_project/design/controller_FSM.sv

@@ -119,8 +119,17 @@ end
         end
     end
 
-
-
+    //输出控制
+    logic   [8:0]   cnt_o;
+    logic           cnt_en;
+    counter#(    .cnt_WIDTH(10)
+    )   counter_output_inst(
+        .cnt_clk    (clk)        ,
+        .cnt_rst_n  (rst_n)      ,
+        .cnt_en     (cnt_en)         ,
+        .cnt_o      (cnt_o)
+    );
+    assign cnt_en   =  (result_valid_o_r)    && (cnt_o   <=  16*8 );
     always_ff @(  posedge clk )begin
         if(!rst_n)begin
             result_valid_o_rr<=0;
@@ -128,8 +137,8 @@ end
         end
         else begin
             result_valid_o_rr<=result_valid_o_r;
-            if(result_valid_o_r ) begin
-                    result_payload_o_c <= out_reg [0][0];
+            if(cnt_en ) begin
+                    result_payload_o_c<= {out_reg [0][1],out_reg [0][0]};
                     out_reg <=  (out_reg >> 32);
             end
             else if(array_rounder_valid) begin
