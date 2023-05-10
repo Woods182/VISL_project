@@ -76,20 +76,20 @@ initial begin
    for (layer_num_top = 1;layer_num_top <=7 ;layer_num_top++ ) begin
         compute_weight_other(layer_num_top);
     end
+    printf("Finish computing other layers.", "normal");
     weight_number   = 0;  
     //compute_weight_other(1); 
     //compute_weight_other(2); 
-    printf("Finish computing other layers.", "normal");
     printf("---------------------------------");
     printf("Simulation is finished.", "green");
     printf("---------------------------------");
     delay(4);
-    printf_3d_array(out_reg);
-    //compere_max(out_reg  );
+/*     printf_3d_array(out_reg);
     printf("---------------------------------");
     printf_3d_array(matrix_reference);
+    printf("---------------------------------"); */
+    compere_max(out_reg  );
     delay(130);
-    
     time_end = clk_cnt ;
     $display( "There are %d clock.", time_end-time_start );
     rst_n =0;
@@ -133,7 +133,7 @@ task init_matrix_reference_with_file();
     fd = $fopen("./testcase/Output.txt", "r");
     for( idx_mat_c=0; idx_mat_c<16; idx_mat_c=idx_mat_c+1 ) begin
         for( idx_mat_r=0; idx_mat_r<16; idx_mat_r=idx_mat_r+1 ) begin
-            code = $fscanf(fd, "%b", matrix_reference[idx_mat_r][idx_mat_c]);
+            code = $fscanf(fd, "%b", matrix_reference[idx_mat_c][idx_mat_r]);
         end
     end
     $fclose(fd);
