@@ -24,7 +24,7 @@ logic sign_bit;
 logic [WIDTH_INPUT - 2*para_frac_bits  - para_int_bits - 1 : 0] overflow_bits;
 
 assign sign_bit = rounded_data[WIDTH_INPUT - para_frac_bits ];
-assign overflow_bits =  rounded_data[WIDTH_INPUT - para_frac_bits  - 1 -: WIDTH_INPUT - 2*para_frac_bits  - para_int_bits];
+assign overflow_bits =  {rounded_data[WIDTH_INPUT - para_frac_bits  - 1], rounded_data[WIDTH_INPUT - para_frac_bits  - 3-: 6]};
 
 ///////////////////////////////////////////////////////////
 // results

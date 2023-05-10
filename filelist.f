@@ -22,3 +22,4 @@
 /home/ningbin/VISL_project/testbench/top_tb.sv
 /home/ningbin/VISL_project/testbench/test_tb.sv
 /home/ningbin/VISL_project/testbench/top_testcase_tb.sv
+/home/ningbin/VISL_project/testbench/rounder_tb.sv

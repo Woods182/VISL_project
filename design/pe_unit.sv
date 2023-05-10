@@ -35,10 +35,10 @@ multiplier #(
     .b(muldata_in_2),
     .product(muldata_out)
 );
-
+logic keep_r,keep_rr;
 always_ff @(posedge clk) begin
     if(!rst_n) muldata_out_reg<=0;
-    else if(keep) muldata_out_reg<=muldata_out_reg;
+    else if(keep_r) muldata_out_reg<=muldata_out_reg;
     else muldata_out_reg<=muldata_out;
 end
 
@@ -46,7 +46,7 @@ end
 // adder
 ///////////////////////////////////////////////////////////
 logic [3:0]                                         add_number_r;
-logic keep_r,keep_rr;
+
 always_ff @(posedge clk)begin
     if(!rst_n) add_number_r<=0;
     // else if(keep_rr) add_number_r<=add_number_r;
@@ -81,7 +81,7 @@ always_ff @(posedge clk) begin
         adddata_out_reg <= 0;
     end
     else begin
-        case ({keep_rr,rounder_en_rrr})
+        case ({keep_r,rounder_en_rrr})
             2'b10: adddata_out_reg <= adddata_out_reg;
             2'b00:begin
                 adddata_out_reg[round_number_rr] <= adddata_out_reg[round_number_rr];
@@ -132,10 +132,10 @@ logic [(para_int_bits + para_frac_bits) * 2 - 1:0]  rounder_data_in;
 logic [para_int_bits + para_frac_bits - 1:0]        rounder_data_out;
 logic [para_int_bits + para_frac_bits - 1:0]        rounder_data_out_reg;
 
-rounder #(
+rounder  #(
     .para_int_bits(para_int_bits),
     .para_frac_bits(para_frac_bits) 
-)(
+) (
     .in(rounder_data_in),
     .out(rounder_data_out)
 );
