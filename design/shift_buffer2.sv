@@ -1,4 +1,4 @@
-module shift_buffer #(
+module shift_buffer2 #(
     parameter buffer_SIZE=8,
     parameter buffer_WIDTH=32
 )
@@ -34,7 +34,7 @@ always_comb begin
     buffer = buffer_reg;
     cnt = cnt_reg;
     if (wr_en_i) begin
-        buffer = {data_i,buffer_reg[buffer_WIDTH*buffer_SIZE-1:32]};
+        buffer = {data_i};
         cnt = cnt_reg + 1'b1;
     end
 

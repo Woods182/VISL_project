@@ -28,7 +28,7 @@ module MLP_acc_top (
     logic           load_type_i_r;
     logic  [3:0]    input_load_number_r;//输入input第几排 0-15
     logic  [2:0]    layer_number_r;//计算第几层0-7
-    logic  [2:0]   weight_number_r;
+    logic  [2:0]    weight_number_r;
 //因为dataload打一拍，所以让输入到array的loadtype打一拍
     always_ff @(posedge clk) begin
         if(!rst_n)begin
@@ -40,16 +40,16 @@ module MLP_acc_top (
         else begin
             load_type_i_r <= load_type_i;
             input_load_number_r<= input_load_number;
-            layer_number_r<= layer_number_r;
+            layer_number_r<= layer_number;
             weight_number_r<= weight_number;
         end
     end
 
 //array input选择，控制信号
     logic   [15:0][15:0][15:0]      out_reg;
-    logic   [255:0]                 data_input_matrix_i;
-    assign data_input_matrix_i = ( layer_number_r == 0) ? dataload_input_data : out_reg[input_load_number_r*2+1:input_load_number_r*2] ;//按位对应是否相同？
-    assign  array_rounder_en =  (input_load_number_r == 7);
+    logic   [15:0][15:0]                data_input_matrix_i;
+    assign data_input_matrix_i = ( layer_number_r == 0) ? dataload_input_data : out_reg[input_load_number_r] ;//按位对应是否相同？
+    assign  array_rounder_en =  (input_load_number_r == 15) && (dataload_weight_valid)  ;
     assign  array_keep =    load_type_i;
 
 //pe_array
@@ -73,15 +73,21 @@ module MLP_acc_top (
         .round_number           (   round_number_o          )
     );
 //round结果保存
-
-    always_ff @(posedge clk)begin
+    reg [3:0] round_number_o_r;
+    assign  round_number_o_r =   round_number_o;
+    
+    /* always_ff @(posedge clk)begin
             if(!rst_n) begin
                 out_reg <= 'd0;
             end
             if(array_rounder_valid) begin
-                out_reg[round_number_o*2 +1: round_number_o*2] <= pe_array_o;
+                //out_reg[round_number_o_r*2 +1: round_number_o_r*2] <= pe_array_o;
+                out_reg[1:0] <= pe_array_o;
+                out_reg <= (out_reg<<2*16*16);
+                
             end
-    end
+    end */
+    
 //output
 logic [2:0] layer_num_rr,layer_num_r,layer_num_rrr;
 always_ff   @(posedge  clk)begin
@@ -104,7 +110,7 @@ end
             result_valid_o_r <= 0;
         end
         else begin
-                if((layer_num_rrr == 7) &&(round_number_o==7 )&&(array_rounder_valid)) begin
+                if((layer_num_rrr == 7) &&(round_number_o_r==7 )&&(array_rounder_valid)) begin
                     result_valid_o_r  <= 1;
                 end
                 else begin
@@ -112,6 +118,7 @@ end
                 end
         end
     end
+
 
 
     always_ff @(  posedge clk )begin
@@ -123,10 +130,14 @@ end
             result_valid_o_rr<=result_valid_o_r;
             if(result_valid_o_r ) begin
                     result_payload_o_c <= out_reg [0][0];
-                    out_reg <=  (out_reg >> 16);
+                    out_reg <=  (out_reg >> 32);
+            end
+            else if(array_rounder_valid) begin
+                //out_reg[round_number_o_r*2 +1: round_number_o_r*2] <= pe_array_o;
+                out_reg <= {out_reg[13:0],pe_array_o};
             end
             else begin
-                result_valid_o_r <=0;
+                result_valid_o_rr <=0;
             end
         end
     end

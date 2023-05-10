@@ -56,6 +56,11 @@ initial begin
     printf("Simulation is finished.", "green");
     printf("---------------------------------");
     $write("Totally %8d clock cycles passed.\n",clk_cnt);
+    load_payload_i      =   0;
+    load_type_i         =   0;
+    input_load_number   =   0;    
+    layer_number        =   1;
+    weight_number       =   0;
     delay(10);
     $finish ;
 
@@ -79,7 +84,7 @@ task init_matrix_inputs();
     integer idx_mat_r, idx_mat_c ;
     for( idx_mat_r=0; idx_mat_r<16; idx_mat_r=idx_mat_r+1 ) begin
         for( idx_mat_c=0; idx_mat_c<16; idx_mat_c=idx_mat_c+1 ) begin
-            matrix_inputs[idx_mat_r][idx_mat_c] = 1 ;
+            matrix_inputs[idx_mat_r][idx_mat_c] = idx_mat_r + idx_mat_c ;
         end
     end
 endtask
@@ -88,6 +93,7 @@ endtask
 task compute_weight1();
     logic   [5:0] w_num,i_num,i_cnt;
     layer_number =  0;
+    load_en_i = 1;
     for(i_num =0 ; i_num <=15 ; i_num++)begin
         load_type_i         =1;
         input_load_number   = i_num;
@@ -96,10 +102,10 @@ task compute_weight1();
             load_payload_i= {matrix_inputs[i_num][i_cnt*2+1], matrix_inputs[i_num][i_cnt*2] };
             delay(1);
         end
-        for (w_num = 0  ;  w_num<=7 ; i_num++) begin
+        for (w_num = 0  ;  w_num<=7 ; w_num++) begin
             weight_number   = w_num; 
             load_type_i     =0;
-            load_payload_i  ={ matrix_weight[layer_number][w_num*2+1][i_num], matrix_inputs[layer_number][w_num*2][i_num] };
+            load_payload_i  ={ matrix_weight[layer_number][w_num*2+1][i_num], matrix_weight[layer_number][w_num*2][i_num] };
             delay(1);
         end
     end

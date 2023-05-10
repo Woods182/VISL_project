@@ -46,12 +46,17 @@ end
 // adder
 ///////////////////////////////////////////////////////////
 logic [3:0]                                         add_number_r;
+logic keep_r,keep_rr;
 always_ff @(posedge clk)begin
     if(!rst_n) add_number_r<=0;
-    else if(keep) add_number_r<=add_number_r;
+    // else if(keep_rr) add_number_r<=add_number_r;
     else add_number_r<=add_number;
 end
 
+always_ff @(posedge clk)begin
+    keep_r <= keep;
+    keep_rr <= keep_r;
+end
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_in_1,adddata_in_2; 
 logic [7:0] [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out_reg; 
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out; 
@@ -76,11 +81,14 @@ always_ff @(posedge clk) begin
         adddata_out_reg <= 'd0;
     end
     else begin
-        case ({keep,rounder_en_rr})
+        case ({keep_rr,rounder_en_rr})
             2'b10: adddata_out_reg <= adddata_out_reg;
             2'b00:begin
                 adddata_out_reg[add_number_r] <= adddata_out;
             end
+             2'b01:begin
+                adddata_out_reg[add_number_r] <= adddata_out;
+            end 
             /*
             2'b11: adddata_out_reg[round_number_r] <= 'd0;
             2'b01: adddata_out_reg[round_number_r] <= 'd0;
@@ -141,5 +149,5 @@ end
 ///////////////////////////////////////////////////////////
 assign data_out=rounder_data_out_reg;
 //assign round_number=round_number_r;
-assign rounder_valid=(rounder_en_rrr);
+assign rounder_valid=(rounder_en_rrr)   &&  (round_number_r == 7);
 endmodule

@@ -5,7 +5,7 @@ module test_tb ( );
 
     initial begin
     $dumpfile("out/test.vcd"); // 表示dump文件的路径与名字。
-    $dumpvars(0,test1_tb);        // 0表示记录xxx module下的所有信号
+    $dumpvars(0,test_tb);        // 0表示记录xxx module下的所有信号
     end
 
     initial begin

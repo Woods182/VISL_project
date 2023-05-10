@@ -10,7 +10,7 @@ module dataload(
     output          input_valid    
 );
     logic weight_wr_en,input_wr_en;
-    shift_buffer #(.buffer_SIZE(1),.buffer_WIDTH(32)
+    shift_buffer2 #(.buffer_SIZE(1),.buffer_WIDTH(32)
     ) weight_buffer_inst (
         .clk(clk),
         .rst_n(rst_n)   ,
