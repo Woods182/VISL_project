@@ -2,7 +2,7 @@ module rounder #(parameter para_int_bits = 7, para_frac_bits = 9) (
     input signed [(para_int_bits + para_frac_bits) * 2 - 1:0] in,
     output signed [para_int_bits + para_frac_bits - 1:0] out
 );
-/*
+
 parameter WIDTH_OUTPUT=para_int_bits + para_frac_bits;
 parameter WIDTH_INPUT=(para_int_bits + para_frac_bits)*2;
 
@@ -62,6 +62,7 @@ always_comb begin
 end
 
 assign out = data_o_reg;
-*/
-assign out = in[para_int_bits + para_frac_bits - 1:0];//简化rounder 用于module_tb
+
+//assign out = in[para_int_bits + para_frac_bits - 1:0];//简化rounder 用于module_tb
+//assign out = in[19:4];
 endmodule

@@ -60,7 +60,7 @@ end
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_in_1,adddata_in_2; 
 logic [7:0] [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out_reg; 
 logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out; 
-logic [3:0] round_number_r;
+logic [3:0] round_number_r,round_number_rr;
 logic       rounder_en_r,rounder_en_rr,rounder_en_rrr;
 
 assign adddata_in_1= /* (rounder_valid &&)?  0: */muldata_out_reg;
@@ -84,10 +84,17 @@ always_ff @(posedge clk) begin
         case ({keep_rr,rounder_en_rrr})
             2'b10: adddata_out_reg <= adddata_out_reg;
             2'b00:begin
+                adddata_out_reg[round_number_rr] <= adddata_out_reg[round_number_rr];
                 adddata_out_reg[add_number_r] <= adddata_out;
             end
-            2'b11: adddata_out_reg[round_number_r] <= 'd0;
-            2'b01: adddata_out_reg[round_number_r] <= 'd0; 
+            2'b11: begin
+                adddata_out_reg[round_number_rr] <= 'd0;
+                adddata_out_reg[add_number_r] <= adddata_out;
+            end
+            2'b01: begin
+                adddata_out_reg[round_number_rr] <= 'd0; 
+                adddata_out_reg[add_number_r] <= adddata_out;
+            end
             default: adddata_out_reg <= adddata_out_reg;
         endcase 
     end
@@ -96,12 +103,15 @@ end
 ///////////////////////////////////////////////////////////
 // formatter
 ///////////////////////////////////////////////////////////
+
 always_ff @(posedge clk)begin
-    if(!rst_n || !rounder_en_rr) begin
+    if(!rst_n /* || !rounder_en_rr */) begin
         round_number_r<=0;
+        round_number_rr<=0;
     end
     else begin
         round_number_r<=add_number_r;
+        round_number_rr<=round_number_r;
     end
 end
 

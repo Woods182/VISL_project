@@ -3,8 +3,7 @@
 ///////////////////////////////////////////////////////////
 `timescale 1ns/1ps
 
-module top_tb();
-
+module top_testcase_tb();
 logic           clk;
 logic           rst_n;
 logic           load_en_i; //开始输入数据
@@ -12,14 +11,16 @@ logic  [31:0]   load_payload_i;//
 logic           load_type_i;//logic-1,weight-0
 logic  [3:0]    input_load_number;//输入logic第几排 0-15
 logic  [2:0]    layer_number;//计算第几层0-7
-logic   [2:0]   weight_number;//0-7   
-logic          result_valid_o;
-logic [31:0]   result_payload_o;
-
+logic  [2:0]    weight_number;//0-7   
+logic           result_valid_o;
+logic [31:0]    result_payload_o;
+logic [2:0]     layer_num_top;
 logic [63:0]    clk_cnt ;
 reg   [7:0] [15:0] [ 15:0 ][15:0]  matrix_weight  ;
 reg   [15:0] [ 15:0 ][15:0]  matrix_inputs  ;
 reg   [15:0] [ 15:0 ][15:0]  matrix_reference  ;
+integer         time_start ;
+integer         time_end ;
 
 MLP_acc_top MLP_acc_top_inst(
     .clk                    (   clk             ),
@@ -33,8 +34,11 @@ MLP_acc_top MLP_acc_top_inst(
     .result_valid_o         (   result_valid_o  ),
     .result_payload_o       (   result_payload_o)
 );
-logic [2:0]     layer_num_top;
+
 initial begin
+    //init
+    init_matrix_weight_with_file();
+    init_matrix_inputs_with_file();
     printf("---------------------------------");
     printf("Start the simulation.", "green");
     printf("---------------------------------");
@@ -46,19 +50,22 @@ initial begin
     input_load_number   =   0;    
     layer_number        =   0;
     weight_number       =   0;
-    init_matrix_weight();
-    init_matrix_inputs();
+
+    init_matrix_weight_with_file();
+    init_matrix_inputs_with_file();
+    init_matrix_reference_with_file();
     delay(5);
     rst_n               =   1;
+    time_start = clk_cnt ;
     //开始输入数据 第一层
     printf("Start computing first layer.", "normal");
     compute_weight1();
     printf("Finish icomputing first layer.", "normal");
     printf("Start computing other layers.", "normal");
-    for (layer_num_top = 1;layer_num_top <=6 ;layer_num_top++ ) begin
+/*     for (layer_num_top = 1;layer_num_top <=6 ;layer_num_top++ ) begin
         compute_weight_other(layer_num_top);
     end 
-    compute_weight_other(7);
+    compute_weight_other(7); */
     printf("Finish computing other layers.", "normal");
     printf("---------------------------------");
     printf("Simulation is finished.", "green");
@@ -70,33 +77,52 @@ initial begin
     layer_number        =   1;
     weight_number       =   0; */ 
     delay(130);
-    $write("Totally %8d clock cycles passed.\n",clk_cnt);
+    time_end = clk_cnt ;
+    $display( "There are %d clock.", time_end-time_start );
     rst_n =0;
+    $write("Totally %8d clock cycles passed.\n",clk_cnt);
     $finish ;
 end
 // *************************************************************************************
 // custom task
 // *************************************************************************************
-task init_matrix_weight();
-    integer idx_layer, idx_mat_r, idx_mat_c ;
-    for(idx_layer=0; idx_layer<8; idx_layer=idx_layer+1) begin
+task init_matrix_inputs_with_file();
+    integer fd, code ;
+    integer idx_mat_r, idx_mat_c ;
+    fd = $fopen("./testcase/Input.txt", "r");
+    for( idx_mat_c=0; idx_mat_c<16; idx_mat_c=idx_mat_c+1 ) begin
         for( idx_mat_r=0; idx_mat_r<16; idx_mat_r=idx_mat_r+1 ) begin
-            for( idx_mat_c=0; idx_mat_c<16; idx_mat_c=idx_mat_c+1 ) begin
-                matrix_weight[idx_layer][idx_mat_r][idx_mat_c] = 1;
+            code = $fscanf(fd, "%b", matrix_inputs[idx_mat_r][idx_mat_c]);
+        end
+    end
+    $fclose(fd);
+endtask 
+
+task init_matrix_weight_with_file();
+    integer fd, code ;
+    integer idx_layer, idx_mat_r, idx_mat_c ;
+    fd = $fopen("./testcase/Weight.txt", "r");
+    for(idx_layer=0; idx_layer<8; idx_layer=idx_layer+1) begin
+        for( idx_mat_c=0; idx_mat_c<16; idx_mat_c=idx_mat_c+1 ) begin
+            for( idx_mat_r=0; idx_mat_r<16; idx_mat_r=idx_mat_r+1 ) begin
+                code = $fscanf(fd,"%b", matrix_weight[idx_layer][idx_mat_r][idx_mat_c]);
             end
         end        
     end
+    $fclose(fd);
 endtask
 
-task init_matrix_inputs();
+task init_matrix_reference_with_file();
+    integer fd, code ;
     integer idx_mat_r, idx_mat_c ;
-    for( idx_mat_r=0; idx_mat_r<16; idx_mat_r=idx_mat_r+1 ) begin
-        for( idx_mat_c=0; idx_mat_c<16; idx_mat_c=idx_mat_c+1 ) begin
-            matrix_inputs[idx_mat_r][idx_mat_c] = 1;
-            //idx_mat_r + idx_mat_c ;
+    fd = $fopen("./testcase/Output.txt", "r");
+    for( idx_mat_c=0; idx_mat_c<16; idx_mat_c=idx_mat_c+1 ) begin
+        for( idx_mat_r=0; idx_mat_r<16; idx_mat_r=idx_mat_r+1 ) begin
+            code = $fscanf(fd, "%b", matrix_reference[idx_mat_r][idx_mat_c]);
         end
     end
-endtask
+    $fclose(fd);
+endtask 
 
 
 task compute_weight1();
@@ -119,13 +145,6 @@ task compute_weight1();
         end
     end
 endtask
-/* 
-    load_payload_i      =   3;
-    load_type_i         =   0;
-    input_load_number   =   0;    
-    layer_number        =   1;
-    weight_number       =   0;  */
-
 
 
 
@@ -152,8 +171,8 @@ endtask
 parameter CLK_CYCLE = 10 ;
 
 initial begin
-    $dumpfile("out/top.vcd"); // 表示dump文件的路径与名字。
-    $dumpvars(0,top_tb);        // 0表示记录xxx module下的所有信号
+    $dumpfile("out/top_testcase.vcd"); // 表示dump文件的路径与名字。
+    $dumpvars(0,top_testcase_tb);        // 0表示记录xxx module下的所有信号
 end
 always begin
     clk = 0 ; #(CLK_CYCLE/2) ;
