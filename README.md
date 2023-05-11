@@ -45,6 +45,7 @@
 ![输出数据](./out/output_fig/vlsiporj_dataout.png "输出数据")
 **ALL RIGHT！**
 ## 运行过程
-![运行过程2](./out/output_fig/vlsiproj_run2.png "运行过程2")
+![运行过程2](./out/output_fig/vlsiproj_run2.png "运行过程2")  
+
 ![运行过程1](./out/output_fig/vlsiproj_run1.png "运行过程1") 
 
