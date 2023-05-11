@@ -1,6 +1,6 @@
 # 8-MLPs Accelerator
-*Author：WoodsNing,ZhaojunNi*     
-*Data：20230508*
+*Author：宁斌 倪兆君*     
+*Data：20230511*
 ## 架构说明
 - 本架构主要目标：节省时钟数
 - 时间瓶颈：输入输出数据带宽为32
