@@ -21,8 +21,8 @@ reg  signed [15:0] [ 15:0 ][15:0]  matrix_inputs  ;
 reg  signed [15:0] [ 15:0 ][15:0]  matrix_reference  ;
 logic signed  [15:0][15:0][15:0]      out_reg;
 integer         time_start ;
-integer         time_end ;
-
+integer         time_end,time_end_compute,time_end_firstlayer ;
+parameter CLK_CYCLE = 10 ;
 MLP_acc_top MLP_acc_top_inst(
     .clk                    (   clk             ),
     .rst_n                  (   rst_n           ),
@@ -34,68 +34,65 @@ MLP_acc_top MLP_acc_top_inst(
     .weight_number          (   weight_number   ),//0-7   
     .result_valid_o         (   result_valid_o  ),
     .result_payload_o       (   result_payload_o),
-    .out_reg_c                (   out_reg         )
+    .out_reg_c              (   out_reg         )
 );
+
 
 initial begin
     //init
+    printf("    ---------------------------------\n");
+    printf("    Initialize data.\n", "blue");
+    printf("-   --------------------------------\n");
     init_matrix_weight_with_file();
     init_matrix_inputs_with_file();
     init_matrix_inputs_with_file();
-    printf("---------------------------------");
-    printf("matrix_inputs.", "green");
-    printf("---------------------------------");
-    printf_3d_array( matrix_inputs );
-    printf("---------------------------------");
-    printf("matrix_weight_0.", "green");
-    printf("---------------------------------");
-    printf_3d_array( matrix_weight[0] );
-    printf("---------------------------------");
-    printf("Start the simulation.", "green");
-    printf("---------------------------------");
-    //idle
-    rst_n               =   0;
-    load_en_i           =   0;
-    load_payload_i      =   0;
-    load_type_i         =   0;
-    input_load_number   =   0;    
-    layer_number        =   0;
-    weight_number       =   0;
-
-    init_matrix_weight_with_file();
-    init_matrix_inputs_with_file();
-    init_matrix_reference_with_file();
-    delay(5);
-    rst_n      =   1;
+    printf("    ---------------------------------\n");
+    printf("    Start the simulation.\n ", "blue");
+    printf("    ---------------------------------\n");
+    idle();
     time_start = clk_cnt ;
     //开始输入数据 第一层
-    printf("Start computing first layer.", "normal");
+     printf("   ---------------------------------\n");
+    printf("    Start computing first layer.\n ", "blue");
     compute_weight1();
-    printf("Finish icomputing first layer.", "normal");
-    printf("Start computing other layers.", "normal");
-   for (layer_num_top = 1;layer_num_top <=7 ;layer_num_top++ ) begin
+    time_end_firstlayer = clk_cnt ;
+    printf("    Finish computing first layer.\n ", "blue");
+    $display("    Layer 0 : %d seconds clock.", time_end_firstlayer-time_start);
+    printf("    ---------------------------------\n");
+    printf("    Start computing other layers.\n ", "blue");
+    //  其他层计算
+    for (layer_num_top = 1;layer_num_top <=7 ;layer_num_top++ ) begin
         compute_weight_other(layer_num_top);
     end
-    printf("Finish computing other layers.", "normal");
+    time_end_compute = clk_cnt ;
+    printf("    Finish computing other layers.\n ", "blue");
+    $display("    Compute time : %d seconds clock.", time_end_compute-time_start);
+    printf("    ---------------------------------\n");
     weight_number   = 0;  
-    //compute_weight_other(1); 
-    //compute_weight_other(2); 
-    printf("---------------------------------");
-    printf("Simulation is finished.", "green");
-    printf("---------------------------------");
     delay(4);
-/*     printf_3d_array(out_reg);
-    printf("---------------------------------");
+
+/*  
+    printf_3d_array(out_reg);
+    printf("---------------------------------\n");
     printf_3d_array(matrix_reference);
-    printf("---------------------------------"); */
+    printf("---------------------------------"); 
+*/
     compere_max(out_reg  );
+    printf("---------------------------------\n");
+    printf("    Start read out the result!\n ", "blue");
+    printf("---------------------------------\n");
     delay(130);
     time_end = clk_cnt ;
-    $display( "There are %d clock.", time_end-time_start );
+    printf("---------------------------------\n");
+    printf("    Simulation is finished!\n ", "blue");
+    $display( " Simulation time : %d clock.\n", time_end-time_start );
+    printf("---------------------------------\n");
     rst_n =0;
-    $write("Totally %8d clock cycles passed.\n",clk_cnt);
     $finish ;
 end
+
+
+
 // *************************************************************************************
 // custom task
 // *************************************************************************************
@@ -139,6 +136,17 @@ task init_matrix_reference_with_file();
     $fclose(fd);
 endtask 
 
+task idle();
+    rst_n               =   0;
+    load_en_i           =   0;
+    load_payload_i      =   0;
+    load_type_i         =   0;
+    input_load_number   =   0;    
+    layer_number        =   0;
+    weight_number       =   0;
+    delay(5);
+    rst_n      =   1;
+endtask
 
 task compute_weight1();
     logic   [5:0] w_num,i_num,i_cnt;
@@ -182,7 +190,7 @@ endtask
 // Necessary Component
 // *************************************************************************************
 
-parameter CLK_CYCLE = 10 ;
+
 
 initial begin
     $dumpfile("out/top_testcase.vcd"); // 表示dump文件的路径与名字。
@@ -267,7 +275,7 @@ task compere_max(
         end
         else begin
             printf("---------------------------------");
-            printf("Failed    !   ", "blue");
+            printf("Failed    !   ", "red");
             printf("---------------------------------");
         end
 
@@ -315,44 +323,6 @@ task printf( string text, string color="normal" );
         $display("\033[0m\033[1;36m%s\033[0m", text);
     end 
 endtask
-task printf_red(string text);
-    $display("\033[0m\033[1;31m%s\033[0m", text);
-endtask 
-task printf_green(string text);
-    $display("\033[0m\033[1;32m%s\033[0m", text);
-endtask 
-task printf_yellow(string text);
-    $display("\033[0m\033[1;33m%s\033[0m", text);
-endtask 
-task printf_blue(string text);
-    $display("\033[0m\033[1;34m%s\033[0m", text);
-endtask 
-task printf_pink(string text);
-    $display("\033[0m\033[1;35m%s\033[0m", text);
-endtask 
-task printf_cyan(string text);
-    $display("\033[0m\033[1;36m%s\033[0m", text);
-endtask 
 
-task set_display_color(string color="normal");
-    if( color == "normal" ) begin
-        $write( "\033[0m" );
-    end else if (color == "red") begin
-        $write( "\033[0m\033[1;31m" );
-    end else if(color == "green")begin
-        $write( "\033[0m\033[1;32m" );
-    end else if (color == "yellow") begin
-        $write( "\033[0m\033[1;33m" );
-    end else if (color == "blue") begin
-        $write( "\033[0m\033[1;34m" );
-    end else if (color == "pink") begin
-        $write( "\033[0m\033[1;35m" );
-    end else if (color == "cyan") begin
-        $write( "\033[0m\033[1;36m" );
-    end 
-endtask 
-task unset_display_color();
-    $write("\033[0m");
-endtask 
 
 endmodule

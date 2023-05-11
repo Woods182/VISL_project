@@ -1,30 +1,36 @@
-module rounder #(parameter para_int_bits = 7, para_frac_bits = 9) (
-    input signed [(para_int_bits + para_frac_bits) * 2 - 1:0] in,
-    output signed [para_int_bits + para_frac_bits - 1:0] out
+///////////////////////////////////////////////////////////
+// Author: Jackbang
+///////////////////////////////////////////////////////////
+
+module fixedpoint_formatter #(
+    parameter WIDTH_INPUT       = 32,
+    parameter WIDTH_OUTPUT      = 16,
+    parameter WIDTH_INTEGER     = 6,
+    parameter WIDTH_FRACTION    = 9
+) (
+    input   [WIDTH_INPUT - 1 : 0]   data_i,
+    output  [WIDTH_OUTPUT - 1 : 0]  data_o  
 );
-
-parameter WIDTH_OUTPUT=para_int_bits + para_frac_bits;//32
-parameter WIDTH_INPUT=(para_int_bits + para_frac_bits)*2;//16
-
 
 ///////////////////////////////////////////////////////////
 // necessary vars
 ///////////////////////////////////////////////////////////
 logic frac_carry_bit;
-logic [WIDTH_INPUT - para_frac_bits  : 0] rounded_data;
+logic [WIDTH_INPUT - WIDTH_FRACTION : 0] rounded_data;
 
-
-assign frac_carry_bit = in[para_frac_bits -1];
-assign rounded_data = {in[WIDTH_INPUT-1], in[WIDTH_INPUT-1 : para_frac_bits ]} + frac_carry_bit;
+// assign frac_carry_bit = data_i[WIDTH_INPUT-1] ? (data_i[WIDTH_FRACTION-1] & (|data_i[0 +: WIDTH_FRACTION-1])) : data_i[WIDTH_FRACTION-1];
+assign frac_carry_bit = data_i[WIDTH_FRACTION-1];
+// may optimize?
+assign rounded_data = {data_i[WIDTH_INPUT-1], data_i[WIDTH_INPUT-1 : WIDTH_FRACTION]} + frac_carry_bit;
 
 ///////////////////////////////////////////////////////////
 // saturation rounding
 ///////////////////////////////////////////////////////////
 logic sign_bit;
-logic [WIDTH_INPUT - 2*para_frac_bits  - para_int_bits - 1 : 0] overflow_bits;
+logic [WIDTH_INPUT - 2*WIDTH_FRACTION - WIDTH_INTEGER - 1 : 0] overflow_bits;
 
-assign sign_bit = rounded_data[WIDTH_INPUT - para_frac_bits ];
-assign overflow_bits =  {rounded_data[WIDTH_INPUT - para_frac_bits  - 1], rounded_data[WIDTH_INPUT - para_frac_bits  - 3-: 6]};
+assign sign_bit = rounded_data[WIDTH_INPUT - WIDTH_FRACTION];
+assign overflow_bits =  rounded_data[WIDTH_INPUT - WIDTH_FRACTION - 1 -: WIDTH_INPUT - 2*WIDTH_FRACTION - WIDTH_INTEGER];
 
 ///////////////////////////////////////////////////////////
 // results
@@ -61,8 +67,6 @@ always_comb begin
     end
 end
 
-assign out = data_o_reg; 
+assign data_o = data_o_reg;
 
-//assign out = in[para_int_bits + para_frac_bits - 1:0];//简化rounder 用于module_tb
-//assign out = in[19:4];
 endmodule

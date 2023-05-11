@@ -135,7 +135,7 @@ logic [para_int_bits + para_frac_bits - 1:0]        rounder_data_out_reg;
 rounder  #(
     .para_int_bits(para_int_bits),
     .para_frac_bits(para_frac_bits) 
-) (
+) rounder_inst (
     .in(rounder_data_in),
     .out(rounder_data_out)
 );
