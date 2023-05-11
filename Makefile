@@ -17,13 +17,13 @@ vcsBaseCommand = vcs    -full64 \
                         -o ./out/simv \
                         -f $(FILELIST) \
 
+run:     compile
+		./out/simv -l log/run.log
+
 compile: clean
 		$(makeDirs)
 		$(vcsBaseCommand)
     
-run:
-		./out/simv -l log/run.log
-
 .PHONY: clean
 clean:
 		\rm -rf simv* *.log *.vpd *.dump csrc *.sim *.mra *.log ucli.key session* *.db vcs.key out/simv* tmp DVEfiles  temp $(Mdir)

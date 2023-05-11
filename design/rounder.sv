@@ -5,7 +5,6 @@ module rounder #(
     input  signed [(para_int_bits + para_frac_bits) * 2 - 1:0] in,
     output signed [      para_int_bits + para_frac_bits - 1:0] out
 );
-
   parameter WIDTH_OUTPUT = para_int_bits + para_frac_bits;  //32
   parameter WIDTH_INPUT = (para_int_bits + para_frac_bits) * 2;  //16
   logic                                    and_sig;

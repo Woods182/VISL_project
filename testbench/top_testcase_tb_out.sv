@@ -18,7 +18,7 @@ logic [63:0]    clk_cnt ;
 reg  signed [7:0] [15:0] [ 15:0 ][15:0]  matrix_weight  ;
 reg  signed [15:0] [ 15:0 ][15:0]  matrix_inputs  ;
 reg  signed [15:0] [ 15:0 ][15:0]  matrix_reference  ;
-reg  signed  [15:0][15:0][15:0]   matrix_output;
+logic signed  [15:0][15:0][15:0]      out_reg;
 integer         time_start ;
 integer         time_end,time_end_compute,time_end_firstlayer ;
 parameter CLK_CYCLE = 10 ;
@@ -32,12 +32,9 @@ MLP_acc_top MLP_acc_top_inst(
     .layer_number           (   layer_number    ),//计算第几层0-7
     .weight_number          (   weight_number   ),//0-7   
     .result_valid_o         (   result_valid_o  ),
-    .result_payload_o       (   result_payload_o)
-    //.out_reg_c              (   out_reg         )
+    .result_payload_o       (   result_payload_o),
+    .out_reg_c              (   out_reg         )
 );
-logic [15:0]    result_out_high,result_out_low;
-assign  result_out_high=result_payload_o[31:16];
-assign  result_out_low=result_payload_o[15:0];
 
 initial begin
 //init
@@ -71,17 +68,20 @@ initial begin
     printf("    ---------------------------------\n");
     weight_number   = 0;  
     delay(4);
-    get_result();
-    printf("    ---------------------------------\n");
+ /* printf_3d_array(out_reg);
+    printf("---------------------------------\n");
+    printf_3d_array(matrix_reference);
+    printf("---------------------------------");  */
+    compere_max(out_reg  );
+    printf("---------------------------------\n");
     printf("    Start read out the result!\n ", "blue");
-    printf("    ---------------------------------\n");
+    printf("---------------------------------\n");
     delay(130);
-    compere_max(matrix_output  );
     time_end = clk_cnt ;
-    printf("    ---------------------------------\n");
+    printf("---------------------------------\n");
     printf("    Simulation is finished!\n ", "blue");
     $display( "     Simulation time : %d clock.\n", time_end-time_start );
-    printf("    ---------------------------------\n");
+    printf("---------------------------------\n");
     rst_n =0;
     $finish ;
 end
@@ -199,17 +199,16 @@ task compere_max(
           end
           $display(""); // print a newline at the end of each row
         end
-         $display("\n");
-        $display( "          There are %d errors.\n", error_cnt );
+        $display( " There are %d errors.\n", error_cnt );
         if (error_cnt==0)begin
-            printf("    ---------------------------------");
-            printf("     Successfully    !   ", "yellow");
-            printf("    ---------------------------------");
+            printf("---------------------------------");
+            printf("    Successfully    !   ", "red");
+            printf("---------------------------------");
         end
         else begin
-            printf("    ---------------------------------");
-            printf("      Failed    !   ", "red");
-            printf("    ---------------------------------");
+            printf("---------------------------------");
+            printf("    Failed    !   ", "red");
+            printf("---------------------------------");
         end
 
     end
@@ -252,7 +251,6 @@ for(idx=0; idx<cycles; idx=idx+1) begin
 end
 endtask 
 
-
 task printf_3d_array(  
     input   [15:0] [ 15:0 ][15:0]  matrix
   );
@@ -266,19 +264,6 @@ task printf_3d_array(
         end
     end
 endtask
-
-task get_result();
-    integer idx_col, idx_row ;
-    @(posedge result_valid_o);
-    for( idx_col=0; idx_col<16; idx_col=idx_col+1 ) begin
-        for( idx_row=0; idx_row<8; idx_row=idx_row+1 ) begin
-            @(posedge clk) ;
-            matrix_output[ idx_col ][ idx_row*2 ] = result_out_high ;
-            matrix_output[ idx_col ][ idx_row*2+1 ] = result_out_low ;
-        end 
-    end 
-endtask 
-
 
 task printf( string text, string color="normal" );
     if( color == "normal" ) begin

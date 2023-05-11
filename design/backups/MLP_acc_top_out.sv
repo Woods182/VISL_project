@@ -8,8 +8,8 @@ module MLP_acc_top (
     input  [ 2:0]             layer_number,       //计算第几层0-7
     input  [ 3:0]             weight_number,      //0-7   
     output                    result_valid_o,
-    output [31:0]             result_payload_o
-    //output [15:0][15:0][15:0] out_reg_c
+    output [31:0]             result_payload_o,
+    output [15:0][15:0][15:0] out_reg_c
 );
   parameter col = 16, row = 2;
   logic [255:0] dataload_input_data;
@@ -124,7 +124,7 @@ module MLP_acc_top (
       .cnt_o    (cnt_tmp)
   );
   assign cnt_rst_n_tmp = (rst_n) & (array_rounder_valid);
-  assign cnt_en        = (result_valid_o_rr) && (cnt_o != 9'd128);  //16*8
+  assign cnt_en        = (result_valid_o_rr) && (cnt_o == 9'd128);  //16*8
   always_ff @(posedge clk) begin
     if (!rst_n) begin
       result_valid_o_rr  <= 1'd0;
@@ -154,5 +154,5 @@ module MLP_acc_top (
   end
   assign result_payload_o = result_payload_o_c;
   assign result_valid_o   = result_valid_o_rrr;
-  //assign out_reg_c        = out_reg;
+  assign out_reg_c        = out_reg;
 endmodule
