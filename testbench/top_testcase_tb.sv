@@ -2,7 +2,6 @@
 // Author: woodsning
 ///////////////////////////////////////////////////////////
 `timescale 1ns/1ps
-
 module top_testcase_tb();
 logic           clk;
 logic           rst_n;
@@ -37,21 +36,20 @@ MLP_acc_top MLP_acc_top_inst(
     .out_reg_c              (   out_reg         )
 );
 
-
 initial begin
-    //init
+//init
     printf("    ---------------------------------\n");
     printf("    Initialize data.\n", "blue");
     printf("-   --------------------------------\n");
     init_matrix_weight_with_file();
     init_matrix_inputs_with_file();
-    init_matrix_inputs_with_file();
+    init_matrix_reference_with_file();
     printf("    ---------------------------------\n");
     printf("    Start the simulation.\n ", "blue");
     printf("    ---------------------------------\n");
     idle();
     time_start = clk_cnt ;
-    //开始输入数据 第一层
+//开始输入数据 第一层
      printf("   ---------------------------------\n");
     printf("    Start computing first layer.\n ", "blue");
     compute_weight1();
@@ -60,7 +58,7 @@ initial begin
     $display("    Layer 0 : %d seconds clock.", time_end_firstlayer-time_start);
     printf("    ---------------------------------\n");
     printf("    Start computing other layers.\n ", "blue");
-    //  其他层计算
+//  其他层计算
     for (layer_num_top = 1;layer_num_top <=7 ;layer_num_top++ ) begin
         compute_weight_other(layer_num_top);
     end
@@ -70,13 +68,10 @@ initial begin
     printf("    ---------------------------------\n");
     weight_number   = 0;  
     delay(4);
-
-/*  
-    printf_3d_array(out_reg);
+ /* printf_3d_array(out_reg);
     printf("---------------------------------\n");
     printf_3d_array(matrix_reference);
-    printf("---------------------------------"); 
-*/
+    printf("---------------------------------");  */
     compere_max(out_reg  );
     printf("---------------------------------\n");
     printf("    Start read out the result!\n ", "blue");
@@ -85,7 +80,7 @@ initial begin
     time_end = clk_cnt ;
     printf("---------------------------------\n");
     printf("    Simulation is finished!\n ", "blue");
-    $display( " Simulation time : %d clock.\n", time_end-time_start );
+    $display( "     Simulation time : %d clock.\n", time_end-time_start );
     printf("---------------------------------\n");
     rst_n =0;
     $finish ;
@@ -150,17 +145,17 @@ endtask
 
 task compute_weight1();
     logic   [5:0] w_num,i_num,i_cnt;
-    layer_number =  0;
-    load_en_i = 1;
+    layer_number = 3'd0;
+    load_en_i = 1'd1;
     for(i_num =0 ; i_num <=15 ; i_num++)begin
-        load_type_i         =1;
+        load_type_i         = 1'd1;
         input_load_number   = i_num;
         //input一行八拍
-        for (i_cnt = 0  ;  i_cnt<=7 ; i_cnt++)begin
+        for (i_cnt = 6'd0  ;  i_cnt<=6'd7 ; i_cnt++)begin
             load_payload_i= {matrix_inputs[i_cnt*2+1][i_num], matrix_inputs[i_cnt*2][i_num] };
             delay(1);
         end
-        for (w_num = 0  ;  w_num<=7 ; w_num++) begin
+        for (w_num = 6'd0  ;  w_num<=6'd7 ; w_num++) begin
             weight_number   = w_num; 
             load_type_i     = 0;
             load_payload_i  ={ matrix_weight[layer_number][i_num][w_num*2+1], matrix_weight[layer_number][i_num][w_num*2] };
@@ -185,12 +180,43 @@ task compute_weight_other(
     end
 endtask
 
+task compere_max(  
+    input   [15:0] [ 15:0 ][15:0]  matrix
+  );
+  integer i, j;
+  integer error_cnt ;
+  error_cnt = 0 ;
+    begin
+      for (i = 0; i < 16; i = i + 1) begin
+        for (j = 0; j < 16; j = j + 1) begin
+            if(matrix[i][j] != matrix_reference[i][j]) begin
+                $write("\033[0m\033[1;31m%d\033[0m ",$signed(matrix[i][j]));//红色
+                error_cnt = error_cnt + 1 ;
+            end
+            else begin
+                $write("\033[0m\033[1;32m%d\033[0m ",$signed(matrix[i][j]));
+            end
+          end
+          $display(""); // print a newline at the end of each row
+        end
+        $display( " There are %d errors.\n", error_cnt );
+        if (error_cnt==0)begin
+            printf("---------------------------------");
+            printf("    Successfully    !   ", "red");
+            printf("---------------------------------");
+        end
+        else begin
+            printf("---------------------------------");
+            printf("    Failed    !   ", "red");
+            printf("---------------------------------");
+        end
+
+    end
+endtask
 
 // *************************************************************************************
 // Necessary Component
 // *************************************************************************************
-
-
 
 initial begin
     $dumpfile("out/top_testcase.vcd"); // 表示dump文件的路径与名字。
@@ -248,39 +274,7 @@ task printf_3d_array(
     end
 endtask
 
-task compere_max(  
-    input   [15:0] [ 15:0 ][15:0]  matrix
-  );
-  integer i, j;
-  integer error_cnt ;
-  error_cnt = 0 ;
-    begin
-      for (i = 0; i < 16; i = i + 1) begin
-        for (j = 0; j < 16; j = j + 1) begin
-            if(matrix[i][j] != matrix_reference[i][j]) begin
-                $write("\033[0m\033[1;31m%d\033[0m ",$signed(matrix[i][j]));//红色
-                error_cnt = error_cnt + 1 ;
-            end
-            else begin
-                $write("\033[0m\033[1;32m%d\033[0m ",$signed(matrix[i][j]));
-            end
-          end
-          $display(""); // print a newline at the end of each row
-        end
-        $display( "There are %d errors.", error_cnt );
-        if (error_cnt==0)begin
-            printf("---------------------------------");
-            printf("Successfully    !   ", "blue");
-            printf("---------------------------------");
-        end
-        else begin
-            printf("---------------------------------");
-            printf("Failed    !   ", "red");
-            printf("---------------------------------");
-        end
 
-    end
-endtask
 //打印结果
 
 /* logic   [15:0]  output_high,output_low;
