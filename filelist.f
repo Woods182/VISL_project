@@ -6,7 +6,7 @@
 ./design/pe_array.sv
 ./design/counter.sv
 ./design/shift_buffer.sv
-./design/shift_buffer2.sv
+./design/shift_buffer_single.sv
 ./design/dataload.sv
 ./design/MLP_acc_top.sv
 

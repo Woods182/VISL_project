@@ -1,4 +1,4 @@
-module shift_buffer2 #(
+module shift_buffer_single #(
     parameter buffer_SIZE  = 8,
     parameter buffer_WIDTH = 32
 ) (
