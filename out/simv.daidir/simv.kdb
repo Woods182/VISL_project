@@ -1,0 +1,22 @@
+rc file Version 1.0
+
+[Design]
+COMPILE_PATH=/home/ningbin/VISL_project
+VCS_HOME=/opt/eda/synopsys/vcs/S-2021.09/
+VERDI_HOME=/opt/eda/synopsys/verdi/S-2021.09/
+SystemC=FALSE
+UUM=FALSE
+KDB=TRUE
+USE_NOVAS_HOME=FALSE
+COSIM=FALSE
+TOP=top_testcase_tb 
+OPTION=-ssv -ssy 
+ELAB_OPTION=-ssv -ssy 
+ELAB=TRUE
+SIMV_WRAPPER=FALSE
+[vcs]
+RUN_ELABCOM=unset TURBO_LOG_DIR ;\rm -rf /home/ningbin/VISL_project/./out/simv.daidir/elabcomLog ;/opt/eda/synopsys/vcs/S-2021.09//linux64/bin/elabcom -logdir /home/ningbin/VISL_project/./out/simv.daidir/elabcomLog  -simvdaidir /home/ningbin/VISL_project/./out/simv.daidir  -lib /home/ningbin/VISL_project/./out/simv.daidir/work  -saveLevel  -elab /home/ningbin/VISL_project/./out/simv.daidir/kdb -simflow -simdir /home/ningbin/VISL_project/./out/simv.daidir/kdb_libs -topfile /home/ningbin/VISL_project/./out/simv.daidir/.elabcomTopFile -ssv -ssy  -Lf work +disable_message+C00380+C00381 +disable_message+C00388+C00389  >& /dev/null  && echo Success >& /home/ningbin/VISL_project/./out/simv.daidir/.elabcomReport || echo Fail >& /home/ningbin/VISL_project/./out/simv.daidir/.elabcomReport; \rm -rf /home/ningbin/VISL_project/./out/simv.daidir/work.lib++ /home/ningbin/VISL_project/./out/simv.daidir/kdb_libs/ 
+
+[Value]
+WREALX=ffff534e50535f58
+WREALZ=ffff534e50535f5a

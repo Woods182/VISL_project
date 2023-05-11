@@ -1,0 +1,149 @@
+0 
+43
++incdir+/home/ningbin/VISL_project/
++itf+/opt/eda/synopsys/vcs/S-2021.09/linux64/lib/vcsdp_lite.tab
++lint=all
++vcsd1
++vpi
+-Mamsrun=
+-Masflags=
+-Mcc=gcc
+-Mcfl= -pipe -fPIC -O -I/opt/eda/synopsys/vcs/S-2021.09/include
+-Mcplusplus=g++
+-Mcrt0=
+-Mcrtn=
+-Mcsrc=
+-Mdir=./csrc
+-Mexternalobj=
+-Mldflags= -rdynamic
+-Mobjects= /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/libvirsim.so /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/liberrorinf.so /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/libsnpsmalloc.so /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/libvfs.so
+-Mout=./out/simv
+-Msaverestoreobj=/opt/eda/synopsys/vcs/S-2021.09/linux64/lib/vcs_save_restore_new.o
+-Msyslibs=/opt/eda/synopsys/verdi/S-2021.09//share/PLI/VCS/LINUX64/pli.a -ldl
+-Mvcsaceobjs=
+-Mxcflags= -pipe -fPIC -I/opt/eda/synopsys/vcs/S-2021.09/include
+-Mxllcflags=
+-P
+-Xufe=2steps
+-debug_access+all
+-f ./filelist.f
+-fsdb
+-full64
+-gen_obj
+-kdb
+-l
+-o ./out/simv
+-picarchive
+-sverilog
+-timescale=10ns/1ns
+-top
+/opt/eda/synopsys/vcs/S-2021.09/linux64/bin/vcs1
+./log/compile.log
+top_testcase_tb
+./out/simv
+/opt/eda/synopsys/verdi/S-2021.09//share/PLI/VCS/LINUX64/verdi.tab
+./filelist.f
+72
+XDG_SESSION_ID=5855
+XDG_RUNTIME_DIR=/run/user/1004
+XDG_DATA_DIRS=/home/ningbin/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share
+VSCODE_IPC_HOOK_CLI=/run/user/1004/vscode-ipc-8d16bf04-4de5-4027-97ae-61a2b582826a.sock
+VSCODE_GIT_IPC_HANDLE=/run/user/1004/vscode-git-d2399b746b.sock
+VSCODE_GIT_ASKPASS_NODE=/home/ningbin/.vscode-server/bin/252e5463d60e63238250799aef7375787f68b4ee/node
+VSCODE_GIT_ASKPASS_MAIN=/home/ningbin/.vscode-server/bin/252e5463d60e63238250799aef7375787f68b4ee/extensions/git/dist/askpass-main.js
+VSCODE_GIT_ASKPASS_EXTRA_ARGS=
+VMR_MODE_FLAG=64
+VERDI_HOME=/opt/eda/synopsys/verdi/S-2021.09/
+VCS_PATHMAP_PRELOAD_DONE=1
+VCS_MX_HOME_INTERNAL=1
+VCS_MODE_FLAG=64
+VCS_LOG_FILE=./log/compile.log
+VCS_HOME=/opt/eda/synopsys/vcs/S-2021.09/
+VCS_EXEC_DONE=1
+VCS_DEPTH=0
+VCS_ARG_ADDED_FOR_TMP=1
+VCS_ARCH=linux64
+UNAME=/bin/uname
+TOOL_HOME=/opt/eda/synopsys/vcs/S-2021.09/linux64
+TERM_PROGRAM_VERSION=1.78.0
+TERM_PROGRAM=vscode
+SYNOPSYS_SIM=/opt/eda/synopsys/vcs/SIM/
+SSH_CONNECTION=10.19.127.119 53554 10.19.125.89 60022
+SSH_CLIENT=10.19.127.119 53554 60022
+SNPS_VERDI_INTERNAL_LP_XML_NEW_FLOW=1
+SNPS_VCS_CLANG_PATH=/opt/eda/synopsys/vcs/S-2021.09//linux64/clang
+SELINUX_USE_CURRENT_RANGE=
+SELINUX_ROLE_REQUESTED=
+SELINUX_LEVEL_REQUESTED=
+SCRNAME=vcs
+SCRIPT_NAME=vcs
+OVA_UUM=0
+OA_UNSUPPORTED_PLAT=linux_rhel60
+NOVAS_HOME=/opt/eda/synopsys/verdi/S-2021.09/
+MOZILLA_HOME=/usr/bin/firefox
+MMSIMHOME=/opt/eda/cadence/SPECTRE201
+MGLS_LICENSE_FILE=1717@10.15.89.162
+MGC_PDF_READER=evince
+MGC_LIB_PATH=/opt/eda/mentor/calibre/aoj_cal_2020.3_16.11/lib
+MGC_HOME=/opt/eda/mentor
+MGC_CALIBRE_SCHEMATIC_SERVER=ic3:9199
+MGC_CALIBRE_SAVE_ALL_RUNSET_VALUES=1
+MGC_CALIBRE_LAYOUT_SERVER=ic3:9189
+MFLAGS=
+MAKE_TERMOUT=/dev/pts/210
+MAKE_TERMERR=/dev/pts/210
+MAKELEVEL=1
+MAKEFLAGS=
+LESSOPEN=||/usr/bin/lesspipe.sh %s
+LC_ALL=C
+INNOVUS_HOME=/opt/eda/cadence/INNOVUS201/
+HISTCONTROL=ignoredups
+GIT_ASKPASS=/home/ningbin/.vscode-server/bin/252e5463d60e63238250799aef7375787f68b4ee/extensions/git/dist/askpass.sh
+COLORTERM=truecolor
+CDS_ROOT=/opt/eda/cadence/IC618
+CDS_Netlisting_Mode=Analog
+CDS_LOAD_ENV=CWD
+CDS_LIC_FILE=5280@10.15.89.162
+CDS_INST_DIR=/opt/eda/cadence/IC618
+CDS_ENABLE_VMS=1
+CDS_AUTO_64BIT=ALL
+CDSROOT=/opt/eda/cadence/IC618
+CDSHOME=/opt/eda/cadence/IC618
+CDSDIR=/opt/eda/cadence/IC618
+CDS=/opt/eda/cadence/IC618
+CALIBRE_HOME=/opt/eda/mentor/calibre/aoj_cal_2020.3_16.11
+CADHOME=/opt/eda/cadence
+CADENCE_DIR=/opt/eda/cadence/IC618
+ASSURA_USE_PVS_LICENSE=1
+ASSURAHOME=/opt/eda/cadence/ASSURA41
+0
+0
+21
+1683783080 ./testbench/rounder_tb.sv
+1683792404 ./testbench/top_testcase_tb.sv
+1683713900 ./testbench/top_tb.sv
+1683551380 ./testbench/pe_array_tb.sv
+1683475752 ./testbench/dataload_tb.sv
+1683470493 ./testbench/shiftbuffer_tb.sv
+1683619934 ./testbench/counter_tb.sv
+1683536580 ./testbench/pe_unit_tb.sv
+1683791315 ./design/MLP_acc_top.sv
+1683789317 ./design/dataload.sv
+1683789371 ./design/shift_buffer_single.sv
+1683788880 ./design/shift_buffer.sv
+1683788439 ./design/counter.sv
+1683789077 ./design/pe_array.sv
+1683788770 ./design/pe_unit.sv
+1683790126 ./design/rounder.sv
+1683788186 ./design/mul.sv
+1683431443 ./design/adder.sv
+1683789262 ./filelist.f
+1630295641 /opt/eda/synopsys/verdi/S-2021.09//share/PLI/VCS/LINUX64/verdi.tab
+1630379311 /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/vcsdp_lite.tab
+4
+1630381392 /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/libvirsim.so
+1630379964 /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/liberrorinf.so
+1630379861 /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/libsnpsmalloc.so
+1630379961 /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/libvfs.so
+1683792408 ./out/simv.daidir
+-1 partitionlib
