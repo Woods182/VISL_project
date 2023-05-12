@@ -2,3 +2,4 @@
 *.vcd
 /log
 *.key
+/out/simv.daidir

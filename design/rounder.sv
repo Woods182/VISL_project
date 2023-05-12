@@ -14,14 +14,16 @@ module rounder #(
   logic                                    frac_carry_bit;
   logic [WIDTH_INPUT - para_frac_bits : 0] rounded_data;
   logic                                    sign_bit;
-  logic [           para_int_bits - 1 : 0] overflow_bits;
+  logic[WIDTH_INPUT - 2*para_frac_bits - para_int_bits : 0]  overflow_bits;
   assign frac_carry_bit = in[para_frac_bits-1];
   assign rounded_data   = {in[WIDTH_INPUT-1], in[WIDTH_INPUT-1 : para_frac_bits]} + frac_carry_bit;
+
   ///////////////////////////////////////////////////////////
   // saturation rounding
   ///////////////////////////////////////////////////////////
   assign sign_bit       = rounded_data[WIDTH_INPUT-para_frac_bits];
-  assign overflow_bits  = {rounded_data[WIDTH_INPUT-para_frac_bits-1], rounded_data[WIDTH_INPUT-para_frac_bits-3-:6]};
+  assign overflow_bits =  rounded_data[WIDTH_INPUT - para_frac_bits - 1 -: para_int_bits+1];
+  //assign overflow_bits  = {rounded_data[WIDTH_INPUT-para_frac_bits-1], rounded_data[WIDTH_INPUT-para_frac_bits-3-:6]};
   ///////////////////////////////////////////////////////////
   // results
   ///////////////////////////////////////////////////////////
