@@ -1,0 +1,63 @@
+$date
+	Thu May 11 13:32:17 2023
+$end
+
+$version
+	Synopsys VCS version S-2021.09_Full64
+$end
+
+$timescale
+	1ps
+$end
+
+$comment Csum: 1 225dfb81e29db325 $end
+
+
+$scope module fixedpoint_formatter_tb $end
+$var reg 32 ! rounder_data_in [31:0] $end
+$var reg 16 " rounder_data_out [15:0] $end
+
+$scope module fixedpoint_formatte_inst $end
+$var wire 32 # data_i [31:0] $end
+$var wire 16 $ data_o [15:0] $end
+$var reg 1 % frac_carry_bit $end
+$var reg 24 & rounded_data [23:0] $end
+$var reg 1 ' sign_bit $end
+$var reg 8 ( overflow_bits [7:0] $end
+$var reg 1 ) and_sig $end
+$var reg 1 * or_sig $end
+$var reg 16 + normal_result [15:0] $end
+$var reg 16 , data_o_reg [15:0] $end
+$upscope $end
+
+$upscope $end
+
+$enddefinitions $end
+
+#0
+$dumpvars
+0)
+0%
+1*
+x'
+b00000001000000111101111001000010 #
+b0111111111111111 $
+b0111111111111111 ,
+b0000000111101111 +
+b000000001000000111101111 &
+b00000001000000111101111001000010 !
+b0111111111111111 "
+bxxxxxxxx (
+$end
+0'
+b00000001 (
+#10000
+b00000000000000000000000000000000 !
+b00000000000000000000000000000000 #
+b000000000000000000000000 &
+b00000000 (
+0*
+b0000000000000000 +
+b0000000000000000 ,
+b0000000000000000 $
+b0000000000000000 "

@@ -1,5 +1,5 @@
 /csrc
-*.vcd
+.vcd
 /log
 *.key
 /out/simv.daidir
