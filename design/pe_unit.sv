@@ -9,7 +9,7 @@ module pe_unit #(
     input                                         rst_n,
     input  [para_int_bits + para_frac_bits - 1:0] data_in_1,
     input  [para_int_bits + para_frac_bits - 1:0] data_in_2,
-    input  [                                 3:0] add_number,    //选择mac调用的reg
+    input  [                                 2:0] add_number,    //选择mac调用的reg
     input                                         rounder_en,
     input                                         keep,
     output [para_int_bits + para_frac_bits - 1:0] data_out,
@@ -44,11 +44,11 @@ module pe_unit #(
   ///////////////////////////////////////////////////////////
   // adder
   ///////////////////////////////////////////////////////////
-  logic [3:0] add_number_r;
+  logic [2:0] add_number_r;
   logic [(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_in_1, adddata_in_2;
   logic [                                       7:0][(para_int_bits + para_frac_bits) * 2 - 1:0] adddata_out_reg;
   logic [(para_int_bits + para_frac_bits) * 2 - 1:0]                                             adddata_out;
-  logic [3:0] round_number_r, round_number_rr;
+  logic [2:0] round_number_r, round_number_rr;
   logic rounder_en_r, rounder_en_rr, rounder_en_rrr;
   assign adddata_in_1 = muldata_out_reg;
   assign adddata_in_2 = adddata_out_reg[add_number_r];
@@ -63,7 +63,7 @@ module pe_unit #(
   );
 
   always_ff @(posedge clk) begin
-    if (!rst_n) add_number_r <= 4'd0;
+    if (!rst_n) add_number_r <= 3'd0;
     else        add_number_r <= add_number;
   end
 
@@ -115,8 +115,8 @@ module pe_unit #(
 
   always_ff @(posedge clk) begin
     if (!rst_n  /* || !rounder_en_rr */) begin
-      round_number_r  <= 4'd0;
-      round_number_rr <= 4'd0;
+      round_number_r  <= 3'd0;
+      round_number_rr <= 3'd0;
     end else begin
       round_number_r  <= add_number_r;
       round_number_rr <= round_number_r;
@@ -152,5 +152,5 @@ module pe_unit #(
   // 输出
   ///////////////////////////////////////////////////////////
   assign data_out      = rounder_data_out_reg;
-  assign rounder_valid = (rounder_en_rrr) && (round_number_r <= 4'd7);
+  assign rounder_valid = (rounder_en_rrr);// && (round_number_r <= 3'd7);
 endmodule

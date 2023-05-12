@@ -2,4 +2,4 @@ Command Line: /opt/eda/synopsys/vcs/S-2021.09//linux64/bin/elabcom -logdir /home
 uname(Linux ic3 3.10.0-1160.88.1.el7.x86_64 #1 SMP Tue Mar 7 15:41:52 UTC 2023 x86_64)
 [INFO] error/warning message 'C00388' has been suppressed.
 [INFO] error/warning message 'C00389' has been suppressed.
-au time 0.049627 0.015810 0.013883 delta 94629888 94629888 total 239026176 239026176
+au time 0.152018 0.015578 0.018674 delta 94629888 94629888 total 239026176 239026176

@@ -44,13 +44,13 @@ top_testcase_tb
 /opt/eda/synopsys/verdi/S-2021.09//share/PLI/VCS/LINUX64/verdi.tab
 ./filelist.f
 72
-XDG_SESSION_ID=5855
+XDG_SESSION_ID=6167
 XDG_RUNTIME_DIR=/run/user/1004
 XDG_DATA_DIRS=/home/ningbin/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share
-VSCODE_IPC_HOOK_CLI=/run/user/1004/vscode-ipc-8d16bf04-4de5-4027-97ae-61a2b582826a.sock
+VSCODE_IPC_HOOK_CLI=/run/user/1004/vscode-ipc-461ffbc3-b766-4bfd-b03e-edf4560b5c1e.sock
 VSCODE_GIT_IPC_HANDLE=/run/user/1004/vscode-git-d2399b746b.sock
-VSCODE_GIT_ASKPASS_NODE=/home/ningbin/.vscode-server/bin/252e5463d60e63238250799aef7375787f68b4ee/node
-VSCODE_GIT_ASKPASS_MAIN=/home/ningbin/.vscode-server/bin/252e5463d60e63238250799aef7375787f68b4ee/extensions/git/dist/askpass-main.js
+VSCODE_GIT_ASKPASS_NODE=/home/ningbin/.vscode-server/bin/6a995c4f4cc2ced6e3237749973982e751cb0bf9/node
+VSCODE_GIT_ASKPASS_MAIN=/home/ningbin/.vscode-server/bin/6a995c4f4cc2ced6e3237749973982e751cb0bf9/extensions/git/dist/askpass-main.js
 VSCODE_GIT_ASKPASS_EXTRA_ARGS=
 VMR_MODE_FLAG=64
 VERDI_HOME=/opt/eda/synopsys/verdi/S-2021.09/
@@ -65,11 +65,11 @@ VCS_ARG_ADDED_FOR_TMP=1
 VCS_ARCH=linux64
 UNAME=/bin/uname
 TOOL_HOME=/opt/eda/synopsys/vcs/S-2021.09/linux64
-TERM_PROGRAM_VERSION=1.78.0
+TERM_PROGRAM_VERSION=1.78.1
 TERM_PROGRAM=vscode
 SYNOPSYS_SIM=/opt/eda/synopsys/vcs/SIM/
-SSH_CONNECTION=10.19.127.119 53554 10.19.125.89 60022
-SSH_CLIENT=10.19.127.119 53554 60022
+SSH_CONNECTION=10.19.127.119 64336 10.19.125.89 60022
+SSH_CLIENT=10.19.127.119 64336 60022
 SNPS_VERDI_INTERNAL_LP_XML_NEW_FLOW=1
 SNPS_VCS_CLANG_PATH=/opt/eda/synopsys/vcs/S-2021.09//linux64/clang
 SELINUX_USE_CURRENT_RANGE=
@@ -90,15 +90,15 @@ MGC_CALIBRE_SCHEMATIC_SERVER=ic3:9199
 MGC_CALIBRE_SAVE_ALL_RUNSET_VALUES=1
 MGC_CALIBRE_LAYOUT_SERVER=ic3:9189
 MFLAGS=
-MAKE_TERMOUT=/dev/pts/210
-MAKE_TERMERR=/dev/pts/210
+MAKE_TERMOUT=/dev/pts/101
+MAKE_TERMERR=/dev/pts/101
 MAKELEVEL=1
 MAKEFLAGS=
 LESSOPEN=||/usr/bin/lesspipe.sh %s
 LC_ALL=C
 INNOVUS_HOME=/opt/eda/cadence/INNOVUS201/
 HISTCONTROL=ignoredups
-GIT_ASKPASS=/home/ningbin/.vscode-server/bin/252e5463d60e63238250799aef7375787f68b4ee/extensions/git/dist/askpass.sh
+GIT_ASKPASS=/home/ningbin/.vscode-server/bin/6a995c4f4cc2ced6e3237749973982e751cb0bf9/extensions/git/dist/askpass.sh
 COLORTERM=truecolor
 CDS_ROOT=/opt/eda/cadence/IC618
 CDS_Netlisting_Mode=Analog
@@ -127,14 +127,14 @@ ASSURAHOME=/opt/eda/cadence/ASSURA41
 1683470493 ./testbench/shiftbuffer_tb.sv
 1683619934 ./testbench/counter_tb.sv
 1683536580 ./testbench/pe_unit_tb.sv
-1683791315 ./design/MLP_acc_top.sv
+1683880273 ./design/MLP_acc_top.sv
 1683789317 ./design/dataload.sv
 1683789371 ./design/shift_buffer_single.sv
 1683788880 ./design/shift_buffer.sv
 1683788439 ./design/counter.sv
-1683789077 ./design/pe_array.sv
-1683788770 ./design/pe_unit.sv
-1683790126 ./design/rounder.sv
+1683880021 ./design/pe_array.sv
+1683879984 ./design/pe_unit.sv
+1683879607 ./design/rounder.sv
 1683788186 ./design/mul.sv
 1683431443 ./design/adder.sv
 1683789262 ./filelist.f
@@ -145,5 +145,5 @@ ASSURAHOME=/opt/eda/cadence/ASSURA41
 1630379964 /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/liberrorinf.so
 1630379861 /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/libsnpsmalloc.so
 1630379961 /opt/eda/synopsys/vcs/S-2021.09/linux64/lib/libvfs.so
-1683792408 ./out/simv.daidir
+1683880333 ./out/simv.daidir
 -1 partitionlib

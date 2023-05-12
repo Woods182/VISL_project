@@ -2,8 +2,8 @@ module rounder #(
     parameter para_int_bits = 7,
     para_frac_bits = 9
 ) (
-    input  signed [(para_int_bits + para_frac_bits) * 2 - 1:0] in,
-    output signed [      para_int_bits + para_frac_bits - 1:0] out
+    input   [(para_int_bits + para_frac_bits) * 2 - 1:0] in,
+    output  [      para_int_bits + para_frac_bits - 1:0] out
 );
   parameter WIDTH_OUTPUT = para_int_bits + para_frac_bits;  //32
   parameter WIDTH_INPUT = (para_int_bits + para_frac_bits) * 2;  //16

@@ -5,8 +5,8 @@ module MLP_acc_top (
     input  [31:0]             load_payload_i,     //
     input                     load_type_i,        //input-1,weight-0
     input  [ 3:0]             input_load_number,  //输入input第几排 0-15
-    input  [ 2:0]             layer_number,       //计算第几层0-7
-    input  [ 3:0]             weight_number,      //0-7   
+    input  [ 3:0]             layer_number,       //计算第几层0-7
+    input  [ 2:0]             weight_number,      //0-7   
     output                    result_valid_o,
     output [31:0]             result_payload_o
     //output [15:0][15:0][15:0] out_reg_c
@@ -17,11 +17,11 @@ module MLP_acc_top (
   logic                     dataload_weight_valid, dataload_input_valid;
   logic                    load_type_i_r;
   logic [ 3:0]             input_load_number_r;  //输入input第几排 0-15
-  logic [ 2:0]             layer_number_r;  //计算第几层0-7
-  logic [ 3:0]             weight_number_r;
+  logic [ 3:0]             layer_number_r;  //计算第几层0-7
+  logic [ 2:0]             weight_number_r;
   logic [15:0][15:0][15:0] out_reg;
   logic                     array_keep, array_rounder_valid;
-  logic [  3:0]             round_number_o;
+  logic [  2:0]             round_number_o;
   logic                     array_rounder_en;
   logic [255:0]             data_input_matrix_i;
   logic [  1:0][15:0][15:0] pe_array_o;
@@ -30,7 +30,7 @@ module MLP_acc_top (
   logic [  3:0]             cnt_tmp;
   logic                     cnt_rst_n_tmp;
   logic                     result_valid_o_r, result_valid_o_rr, result_valid_o_rrr;
-  logic [2:0]               layer_num_rr, layer_num_r, layer_num_rrr;
+  logic [3:0]               layer_num_rr, layer_num_r, layer_num_rrr;
   reg   [  3:0]             round_number_o_c;
   assign data_input_matrix_i = (layer_number_r == 0) ? dataload_input_data : out_reg[input_load_number_r];  //按位对应是否相同？
   assign array_rounder_en    = (input_load_number_r == 15) && (dataload_weight_valid) && (!result_valid_o_r);
@@ -54,8 +54,8 @@ module MLP_acc_top (
     if (!rst_n) begin
       load_type_i_r       <= 1'd0;
       input_load_number_r <= 4'd0;
-      layer_number_r      <= 3'd0;
-      weight_number_r     <= 4'd0;
+      layer_number_r      <= 4'd0;
+      weight_number_r     <= 3'd0;
     end else begin
       load_type_i_r       <= load_type_i;
       input_load_number_r <= input_load_number;
@@ -80,9 +80,9 @@ module MLP_acc_top (
 
   always_ff @(posedge clk) begin
     if (!rst_n) begin
-      layer_num_r   <= 3'd0;
-      layer_num_rr  <= 3'd0;
-      layer_num_rrr <= 3'd0;
+      layer_num_r   <= 4'd0;
+      layer_num_rr  <= 4'd0;
+      layer_num_rrr <= 4'd0;
     end else begin
       layer_num_r   <= layer_number_r;
       layer_num_rr  <= layer_num_r;
