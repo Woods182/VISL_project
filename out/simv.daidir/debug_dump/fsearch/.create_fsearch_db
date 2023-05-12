@@ -1,9 +1,0 @@
-#!/bin/sh -h 
-PYTHONHOME=/opt/eda/synopsys/vcs/S-2021.09//etc/search/pyh
-export PYTHONHOME
-PYTHONPATH=/opt/eda/synopsys/vcs/S-2021.09/linux64/lib/pylib27
-export PYTHONPATH
-LD_LIBRARY_PATH=/opt/eda/synopsys/vcs/S-2021.09/linux64/lib:/opt/eda/synopsys/vcs/S-2021.09/linux64/lib/pylib27
-export LD_LIBRARY_PATH
-/opt/eda/synopsys/vcs/S-2021.09/linux64/bin/vcsfind_create_index.exe  -z  "/home/ningbin/VISL_project/./out/simv.daidir/debug_dump/fsearch/./idents_Dk3CiC.xml.gz" "/home/ningbin/VISL_project/./out/simv.daidir/debug_dump/fsearch/./idents_tapi.xml.gz" -o "/home/ningbin/VISL_project/./out/simv.daidir/debug_dump/fsearch/fsearch.db_tmp"
-\mv "/home/ningbin/VISL_project/./out/simv.daidir/debug_dump/fsearch/fsearch.db_tmp" "/home/ningbin/VISL_project/./out/simv.daidir/debug_dump/fsearch/fsearch.db"
