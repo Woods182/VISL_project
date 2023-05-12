@@ -1,6 +1,11 @@
 # 8-MLPs Accelerator
 *Author：宁斌 倪兆君*     
 *Data：20230511*
+## 设计运行说明
+- 在project文件夹下运行，make
+- 设计文件：./design/
+- 文件类型:.sv(systemverilog)
+- 顶层测试文件：./testbench/top_testcase_tb.sv
 ## 架构说明
 - 本架构主要目标：节省时钟数
 - 时间瓶颈：输入输出数据带宽为32
