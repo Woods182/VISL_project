@@ -53,4 +53,7 @@
 ![运行过程2](./out/output_fig/vlsiproj_run2.png "运行过程2")  
 
 ![运行过程1](./out/output_fig/vlsiproj_run1.png "运行过程1") 
+## 100个input的测试
+![运行过程3](./out/output_fig/test100_1.png "运行过程3")  
 
+![运行过程4](./out/output_fig/test100_2.png "运行过程4") 
