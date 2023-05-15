@@ -1,4 +1,4 @@
-TOPMODULE=top_testcase_tb
+TOPMODULE=top_testcase100_tb
 FILELIST=./filelist.f
 INCLUDE_DIR=/home/ningbin/VISL_project/
 Mdir=./csrc

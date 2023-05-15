@@ -19,3 +19,4 @@
 ./testbench/top_tb.sv
 ./testbench/top_testcase_tb.sv
 ./testbench/rounder_tb.sv
+./testbench/top_testcase100_tb.sv
