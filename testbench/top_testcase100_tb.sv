@@ -15,15 +15,14 @@ logic           result_valid_o;
 logic [31:0]    result_payload_o;
 logic [3:0]     layer_num_top;
 logic [63:0]    clk_cnt ;
-logic [6:0] round_num;
 reg  signed [7:0] [15:0] [ 15:0 ][15:0]  matrix_weight  ;
 reg  signed [99:0] [15:0] [ 15:0 ][15:0]  matrix_inputs  ;
 reg  signed [99:0]  [15:0] [ 15:0 ][15:0]  matrix_reference  ;
-reg  signed [99:0] [15:0][15:0][15:0]   matrix_output;
-
+reg  signed  [99:0][15:0][15:0][15:0]   matrix_output;
 integer         time_start ;
-integer         time_end,time_end_compute,time_end_firstlayer ;
-parameter       CLK_CYCLE = 10 ;
+integer         time_begin_compute,time_end_compute;
+parameter CLK_CYCLE = 10 ;
+integer input_data_num;
 integer         error_round;
 MLP_acc_top MLP_acc_top_inst(
     .clk                    (   clk             ),
@@ -41,7 +40,6 @@ MLP_acc_top MLP_acc_top_inst(
 logic [15:0]    result_out_high,result_out_low;
 assign  result_out_high=result_payload_o[31:16];
 assign  result_out_low=result_payload_o[15:0];
-integer round_num;
 
 initial begin
 //init
@@ -55,9 +53,9 @@ initial begin
     printf("    ---------------------------------\n");
     printf("    Start the simulation.\n ", "blue");
     printf("    ---------------------------------\n");
-    for(round_num=0;round_num<100;round_num++)begin
-        Compute_main(round_num);
-    end
+    idle();
+    Compute_main(0);
+    printf_3d_array( matrix_output[0]);
     if (error_round==0)begin
             printf("    ---------------------------------");
             printf("     Successfully    !   ", "yellow");
@@ -67,7 +65,8 @@ initial begin
             printf("    ---------------------------------");
             printf("      Failed    !   ", "red");
             printf("    ---------------------------------");
-        end
+    end
+    rst_n =0;
     $finish ;
 end
 
@@ -104,7 +103,19 @@ task init_matrix_weight_with_file();
     $fclose(fd);
 endtask
 
-
+task printf_3d_array(  
+    input   [15:0] [ 15:0 ][15:0]  matrix
+  );
+  integer i, j;
+    begin
+      for (i = 0; i < 16; i = i + 1) begin
+        for (j = 0; j < 16; j = j + 1) begin
+            $write("\033[0m\033[1;32m%d\033[0m  ",$signed(matrix[i][j]));
+          end
+          $display(""); // print a newline at the end of each row
+        end
+    end
+endtask
 
 task init_matrix_reference_with_file();
     integer fd, code ;
@@ -133,7 +144,7 @@ task idle();
 endtask
 
 task compute_weight1(
-    input   [6:0] round_num
+    input   [6:0] input_data_num
 );
     logic   [5:0] w_num,i_num,i_cnt;
     layer_number = 3'd0;
@@ -143,7 +154,7 @@ task compute_weight1(
         input_load_number   = i_num;
         //input一行八拍
         for (i_cnt = 6'd0  ;  i_cnt<=6'd7 ; i_cnt++)begin
-            load_payload_i= {matrix_inputs[round_num][i_cnt*2+1][i_num], matrix_inputs[round_num][i_cnt*2][i_num] };
+            load_payload_i= {matrix_inputs[input_data_num][i_cnt*2+1][i_num], matrix_inputs[input_data_num][i_cnt*2][i_num] };
             delay(1);
         end
         for (w_num = 6'd0  ;  w_num<=6'd7 ; w_num++) begin
@@ -171,43 +182,8 @@ task compute_weight_other(
     end
 endtask
 
-task compere_max(  
-    input   [6:0]   round_num
-  );
-  integer i, j;
-  integer error_cnt ;
-  error_cnt = 0 ;
-    begin
-      for (i = 0; i < 16; i = i + 1) begin
-        for (j = 0; j < 16; j = j + 1) begin
-            if(matrix_output[round_num][i][j] != matrix_reference[round_num][i][j]) begin
-                $write("\033[0m\033[1;31m%d\033[0m ",$signed(matrix_output[round_num][i][j]));//红色
-                error_cnt = error_cnt + 1 ;
-            end
-            else begin
-                $write("\033[0m\033[1;32m%d\033[0m ",$signed(matrix_output[round_num][i][j]));
-            end
-          end
-          $display(""); // print a newline at the end of each row
-        end
-         $display("\n");
-        $display( "          There are %d errors.\n", error_cnt );
-        if (error_cnt==0)begin
-            printf("    ---------------------------------");
-            printf("     Successfully    !   ", "yellow");
-            printf("    ---------------------------------");
-        end
-        else begin
-            printf("    ---------------------------------");
-            printf("      Failed    !   ", "red");
-            printf("    ---------------------------------");
-        end
-
-    end
-endtask
-
 task compere100(  
-    input   [6:0]   round_num
+    input   [6:0]   input_data_num
   );
   integer i, j;
   integer error_cnt ;
@@ -215,18 +191,13 @@ task compere100(
     begin
       for (i = 0; i < 16; i = i + 1) begin
         for (j = 0; j < 16; j = j + 1) begin
-            if(matrix_output[round_num][i][j] != matrix_reference[round_num][i][j]) begin
-                //$write("\033[0m\033[1;31m%d\033[0m ",$signed(matrix_output[round_num][i][j]));//红色
+            if(matrix_output[input_data_num][i][j] != matrix_reference[input_data_num][i][j]) begin
+                //$write("\033[0m\033[1;31m%d\033[0m ",$signed(matrix_output[input_data_num][i][j]));//红色
                 error_cnt = error_cnt + 1 ;
             end
-           /*  else begin
-                $write("\033[0m\033[1;32m%d\033[0m ",$signed(matrix_output[round_num][i][j]));
-            end */
           end
-          //$display(""); // print a newline at the end of each row
         end
-         //$display("\n");
-        $display("  input[%d] -> %d errors. "   ,round_num,error_cnt);
+        $display("  input[%d] -> %d errors. "   ,input_data_num,error_cnt);
          if (error_cnt!=0)begin
             error_round ++;
         end
@@ -234,21 +205,20 @@ task compere100(
 endtask
 
 task Compute_main(
-    input [6:0] round_num
+    input [6:0] input_data_num
 );
-    idle  ();
-    compute_weight1(round_num);
+    //开始输入数据 第一层
+    idle();
+    compute_weight1(input_data_num);
 //  其他层计算
     for (layer_num_top = 1;layer_num_top <=7 ;layer_num_top++ ) begin
         compute_weight_other(layer_num_top);
     end
     weight_number   = 0;  
     delay(4);
-    get_result(round_num);
+    get_result(input_data_num);
     delay(130);
-    //compere_max(round_num  );
-    compere100(round_num  );
-    rst_n =0;
+    compere100(input_data_num );
 endtask
 
 // *************************************************************************************
@@ -259,6 +229,7 @@ endtask
     $dumpfile("out/top_testcase100.vcd"); // 表示dump文件的路径与名字。
     $dumpvars(0,top_testcase100_tb);        // 0表示记录xxx module下的所有信号
 end */
+
 always begin
     clk = 0 ; #(CLK_CYCLE/2) ;
     clk = 1 ; #(CLK_CYCLE/2) ;
@@ -289,30 +260,17 @@ end
 endtask 
 
 
-task printf_3d_array(  
-    input   [15:0] [ 15:0 ][15:0]  matrix
-  );
-  integer i, j;
-    begin
-      for (i = 0; i < 16; i = i + 1) begin
-        for (j = 0; j < 16; j = j + 1) begin
-            $write("\033[0m\033[1;32m%d\033[0m  ",$signed(matrix[i][j]));
-          end
-          $display(""); // print a newline at the end of each row
-        end
-    end
-endtask
 
 task get_result(
-    input [6:0] round_num
+    input [6:0] input_data_num
 );
     integer idx_col, idx_row ;
     @(posedge result_valid_o);
     for( idx_col=0; idx_col<16; idx_col=idx_col+1 ) begin
         for( idx_row=0; idx_row<8; idx_row=idx_row+1 ) begin
             @(posedge clk) ;
-            matrix_output[round_num][ idx_col ][ idx_row*2 ] = result_out_high ;
-            matrix_output[round_num][ idx_col ][ idx_row*2+1 ] = result_out_low ;
+            matrix_output[input_data_num][ idx_col ][ idx_row*2 ] = result_out_high ;
+            matrix_output[input_data_num][ idx_col ][ idx_row*2+1 ] = result_out_low ;
         end 
     end 
 endtask 

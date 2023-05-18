@@ -221,8 +221,9 @@ endtask
 
 initial begin
     $dumpfile("out/top_testcase.vcd"); // 表示dump文件的路径与名字。
-    $dumpvars(0,top_testcase_tb);        // 0表示记录xxx module下的所有信号
+   $dumpvars(0,top_testcase_tb);        // 0表示记录xxx module下的所有信号
 end
+
 always begin
     clk = 0 ; #(CLK_CYCLE/2) ;
     clk = 1 ; #(CLK_CYCLE/2) ;
