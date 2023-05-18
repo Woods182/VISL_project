@@ -19,6 +19,7 @@ design needs large blocks of memory.
 5. The process of reading data into the module is simplified. However, during each complete
 calculation (input a single I−1 to output corresponding I7), all weight and input parameters
 outside the module can only be read once at most.
+__Another Work：https://github.com/jackbang/MulAdd_Acc__
 ## Design  Structure
 
 Since the main bottleneck of this project is the input data bandwidth (32bit), we use a 2*16PE array with the same Input data for the same columns and the same weight data for the same rows. Such a structure can effectively solve the limitation of too small input data bandwidth. When inputting input data, wait for eight clock cycles to load all 16 data into it, while the weight data can be used for calculation immediately after input. Only the first of the eight MLPs requires input data to be read from a *.txt* file.
