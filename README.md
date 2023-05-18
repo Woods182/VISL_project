@@ -19,6 +19,7 @@ design needs large blocks of memory.
 5. The process of reading data into the module is simplified. However, during each complete
 calculation (input a single I−1 to output corresponding I7), all weight and input parameters
 outside the module can only be read once at most.
+
 __Another Work：https://github.com/jackbang/MulAdd_Acc__
 ## Design  Structure
 
